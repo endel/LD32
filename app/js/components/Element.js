@@ -1,55 +1,103 @@
-export default class Element extends PIXI.Sprite {
+var _default = require('../data/elements').default;
+var combinations = require('../data/elements').combinations;
+
+export default class Element extends PIXI.DisplayObjectContainer {
 
   constructor(identifier, isBase = true) {
-    super(PIXI.Texture.fromImage("images/elements/" + identifier + ".png"));
+    super();
+
     console.log("New element: ", identifier, isBase)
 
-    this.identifier = identifier;
-    this.width = 50;
-    this.height = 50;
+    this.setIdentifier(identifier);
     this.isBase = isBase
 
-    this.click = this.tap = this.dragStart.bind(this);
-
     this.draggable({
+      label: (isBase ? "inventory" : "working"),
       revert: "invalid",
       revertDuration: 200,
       cursor: "move",
       helper: (isBase ? "clone" : "original"),
       cursorAt: [ this.width / 2, this.height / 2 ],
-      start: this.dragStart.bind(this),
-      drag: this.dragging.bind(this),
-      stop: this.dragStop.bind(this)
+      // start: this.dragStart.bind(this),
+      // drag: this.dragging.bind(this)
+    });
+
+    this.droppable({
+      accepts: ["inventory", "working"],
+      drop: this.onDrop.bind(this),
+      greedy: true // prevent event propagation
     });
   }
 
-  set combiner(_combiner) {
-    this._combiner = _combiner;
-    this.combinedAt = new Date();
+  setIdentifier(identifier) {
+    // remove previous icon
+    if (this.icon) {
+      this.icon.parent.removeChild(this.icon);
+      this.label.parent.removeChild(this.label);
+    }
+
+    this.icon = new PIXI.Sprite(PIXI.Texture.fromImage("images/elements/" + identifier + ".png"));
+    this.addChild(this.icon)
+
+    this.data = _default[ identifier ] || combinations[ identifier ];
+    this.identifier = identifier;
+
+    this.label = new PIXI.Text(this.data.label, {
+      font: "20px Arial",
+      stroke: "#fff",
+      align: "center"
+    });
+    this.addChild(this.label);
   }
 
   update() {
   }
 
-  dragStart() {
-    var time = new Date();
+  remove() {
+    this.parent.removeChild(this);
+  }
 
-    this.startX = this.x;
-    this.startY = this.y;
+  onDrop(element, cursor) {
+    let result = this.combine(element);
+    if (result) {
 
-    if (this._combiner && (time - this.combinedAt) > 100) {
-      this._combiner.remove(this);
+      if (element.isBase) {
+        element.dragOptions.revert = true;
+        element.dragOptions.revertDuration = 0;
+      } else {
+        element.remove();
+      }
+
+      console.log("Result: ", result)
+      this.setIdentifier(result);
+      // this.inventory.addElement(new Element(result, false));
     }
-  }
-
-  dragging() {
-  }
-
-  dragStop() {
   }
 
   copy() {
     return new Element(this.identifier);
+  }
+
+  combine(element) {
+    var elements = [this, element];
+
+    for (let result in combinations) {
+      // clone combinations array
+      let items = JSON.parse(JSON.stringify(combinations[result].requirements));
+
+      for (var i = 0; i<elements.length; i++) {
+        let foundElement = items.indexOf(elements[i].identifier);
+        if (foundElement >= 0) {
+          items.splice(foundElement, 1)
+        }
+      }
+
+      if (items.length == 0) {
+        return result;
+      }
+    }
+
+    return false;
   }
 
 }

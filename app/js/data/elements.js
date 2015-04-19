@@ -1,15 +1,34 @@
 export default {
 
   "default": {
-    "amarelo": {},
-    "azul": {},
-    "vermelho": {},
+    "amarelo": {
+      "label": "Amarelo"
+    },
+
+    "azul": {
+      "label": "Azul"
+    },
+
+    "vermelho": {
+      "label": "Vermelho"
+    },
   },
 
   "combinations": {
-    "verde": [ "amarelo", "azul" ],
-    "roxo": [ "vermelho", "azul" ],
-    "laranja": [ "amarelo", "vermelho" ],
+    "verde": {
+      "label": "Verde",
+      "requirements": [ "amarelo", "azul" ]
+    },
+
+    "roxo": {
+      "label": "Roxo",
+      "requirements": [ "vermelho", "azul" ]
+    },
+
+    "laranja": {
+      "label": "Laranja",
+      "requirements": [ "amarelo", "vermelho" ]
+    },
   }
 
 }

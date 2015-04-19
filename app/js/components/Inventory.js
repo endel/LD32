@@ -7,8 +7,9 @@ export default class Inventory extends PIXI.Sprite {
   constructor() {
     super(PIXI.Texture.fromImage("images/combiner.png"));
 
-    this.width = 400;
-    this.height = 100;
+    this.width = 100;
+    this.height = 400;
+    this.itemsPerLine = 2;
 
     this.elements = []
   }
@@ -24,8 +25,8 @@ export default class Inventory extends PIXI.Sprite {
   }
 
   addElement(element) {
-    element.y = this.y
-    element.x = this.x + element.width * this.elements.length;
+    element.y = this.y + element.height * this.elements.length
+    element.x = this.x;
     this.elements.push(element)
     this.parent.addChild(element);
   }

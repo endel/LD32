@@ -1,5 +1,6 @@
-import Combiner from './components/Combiner'
+import WorkingArea from './components/WorkingArea'
 import Inventory from './components/Inventory'
+import DeliveryArea from './components/DeliveryArea'
 
 export default class Craft extends PIXI.Stage {
 
@@ -7,15 +8,22 @@ export default class Craft extends PIXI.Stage {
     super();
 
     this.inventory = new Inventory()
-    this.combiner = new Combiner(this.inventory);
+    this.workingArea = new WorkingArea(this.inventory);
+    this.deliveryArea = new DeliveryArea();
 
-    this.combiner.x = 4
-    this.combiner.y = 4
-    this.addChild(this.combiner);
+    this.workingArea.x = (window.innerWidth / SCALE_RATIO) - this.workingArea.width - 4;
+    this.workingArea.y = (window.innerHeight / SCALE_RATIO) - this.workingArea.height - 4;
+    this.addChild(this.workingArea);
 
-    this.inventory.x = (window.innerWidth / SCALE_RATIO) - this.inventory.width - 4;
-    this.inventory.y = (window.innerHeight / SCALE_RATIO) - this.inventory.height - 4;
+    this.inventory.x = 4;
+    this.inventory.y = 4;
     this.addChild(this.inventory)
+
+    this.deliveryArea.x = (window.innerWidth / SCALE_RATIO) - this.deliveryArea.width - 4;
+    this.deliveryArea.y = (window.innerHeight / SCALE_RATIO) - this.deliveryArea.height - 4;
+    this.addChild(this.deliveryArea);
+
+    // setup
     this.inventory.setup();
   }
 

@@ -11,6 +11,7 @@ var reload = browserSync.reload;
 
 var through2 = require('through2');
 var browserify = require('browserify');
+var babelify = require('babelify');
 
 gulp.task('stylesheet', ['sprites'], function () {
   return gulp.src('app/css/main.styl')
@@ -60,8 +61,10 @@ gulp.task('sprites', function() {
 gulp.task('javascript', function () {
   return gulp.src('app/js/main.js')
     .pipe(through2.obj(function (file, enc, next){ // workaround for https://github.com/babel/babelify/issues/46
-      browserify(file.path)
-      .transform('babelify')
+      browserify(file.path).transform(babelify.configure({
+        experimental: true,
+        playground: true
+      }))
       .bundle(function(err, res){
         if (err) { return next(err); }
 
