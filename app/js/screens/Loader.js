@@ -5,6 +5,9 @@ export default class Loader extends PIXI.Stage {
   constructor() {
     super();
 
+    this.loadCounter = 0;
+    this.maxLoadCounter = 2;
+
     var that = this;
 
     this.indicator = new PIXI.Sprite(PIXI.Texture.fromImage("images/pictureBlacksmith_0001.png"));
@@ -14,10 +17,12 @@ export default class Loader extends PIXI.Stage {
     this.indicator.y = SCREEN_HEIGHT / 2;
     this.addChild(this.indicator);
 
+    sounds.on('load', this.incrementLoader.bind(this));
+
     this.indicator.texture.baseTexture.on('loaded', function() {
       this.removeAllListeners();
       that.loader = new PIXI.AssetLoader(["spritesheet.json"]);
-      that.loader.onComplete = that.onAssetsLoaded.bind(that);
+      that.loader.onComplete = that.incrementLoader.bind(that);
       that.loader.load();
     });
   }
@@ -26,9 +31,13 @@ export default class Loader extends PIXI.Stage {
     this.indicator.rotation += 0.01;
   }
 
-  onAssetsLoaded() {
-    console.log("Loaded!");
-    controller.setStage(new Intro);
+  incrementLoader() {
+    debugger;
+    this.loadCounter++;
+
+    if (this.loadCounter == this.maxLoadCounter) {
+      controller.setStage(new Intro);
+    }
   }
 
 }

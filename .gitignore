@@ -21,3 +21,5 @@ erl_crash.dump
 # comment this depending on your deployment strategy.
 /priv/static/css
 /priv/static/js
+
+app/js/data/sound_effects.json

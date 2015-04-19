@@ -14,6 +14,7 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 
 var spritesheet = require('spritesheet-js');
+var audiosprite = require('audiosprite');
 
 gulp.task('stylesheet', ['sprites'], function () {
   return gulp.src('app/css/main.styl')
@@ -104,6 +105,25 @@ gulp.task('html', ['stylesheet'], function () {
     .pipe($.useref())
     .pipe($.if('*.html', $.minifyHtml({conditionals: true, loose: true})))
     .pipe(gulp.dest('dist'));
+});
+
+gulp.task('audio', function () {
+  var files = fs.readdirSync('app/sounds').map(function(f) {
+    return 'app/sounds/' + f;
+  });
+
+  audiosprite(files, { format: 'howler', output: 'dist/sound/sound_effects', path: 'sound' }, function(err, obj) {
+    if (err) {
+      return console.error(err);
+    }
+    var json = JSON.stringify(obj, null, 2);
+    console.log( json );
+    fs.writeFile('app/js/data/sound_effects.json', json);
+  });
+
+  audiosprite(files, { format: 'howler', output: '.tmp/sound/sound_effects', path: 'sound'  }, function(err, obj) {
+    if (err) { return console.error(err); }
+  });
 });
 
 gulp.task('images', function () {
@@ -207,7 +227,7 @@ gulp.task('wiredep', function () {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['jshint', 'html', 'javascript', 'stylesheet', 'images', 'fonts', 'extras'], function () {
+gulp.task('build', ['jshint', 'html', 'javascript', 'stylesheet', 'images', 'audio', 'fonts', 'extras'], function () {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 

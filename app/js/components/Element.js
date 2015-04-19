@@ -79,14 +79,22 @@ export default class Element extends PIXI.DisplayObjectContainer {
     if (result) {
       var messages = ["Yey.", "It worked.", "Sounds good."]
       events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+      sounds.play('craft-success')
 
       this.setIdentifier(result);
     } else {
 
       var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."]
       events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
-      ParticleEmitter
-      this.parent.addChild(new ParticleEmitter)
+
+      sounds.play('craft-fail')
+
+      // TODO: this is not working!
+      var emitter = new ParticleEmitter();
+      emitter.x = this.x;
+      emitter.y = this.y;
+      this.parent.addChild(emitter)
+      emitter.update();
 
       this.remove();
     }

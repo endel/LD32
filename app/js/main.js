@@ -2,7 +2,15 @@
 
 import PIXI from 'pixi.js'
 window.PIXI = PIXI;
+PIXI.extras = {};
 require('./vendor/pixi.draggable')
+require('./vendor/pixi.particles')
+
+import EventEmitter from 'wolfy87-eventemitter';
+import {Howl, Howler} from 'howler';
+
+import GameController from './GameController'
+import Loader from './screens/Loader'
 
 Math.clamp = function(num, min, max) {
   return num < min ? min : (num > max ? max : num);
@@ -15,11 +23,10 @@ window.LARGE_FONT = '32px emulogicregular'
 window.SCREEN_WIDTH = 1136
 window.SCREEN_HEIGHT = 640
 
-import EventEmitter from 'wolfy87-eventemitter';
-window.events = new EventEmitter()
+// music / sound effects
+window.sounds = new Howl(require('./data/sound_effects.json'));
 
-import GameController from './GameController'
-import Loader from './screens/Loader'
+window.events = new EventEmitter()
 
 window.renderer = new PIXI.WebGLRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, {
   antialias: false,
