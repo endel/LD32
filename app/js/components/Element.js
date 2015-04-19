@@ -43,8 +43,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
     this.identifier = identifier;
 
     this.label = new PIXI.Text(this.data.label, {
-      font: "20px Arial",
-      stroke: "#fff",
+      font: DEFAULT_FONT,
+      fill: "#fff",
       align: "center"
     });
     this.addChild(this.label);

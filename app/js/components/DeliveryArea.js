@@ -1,10 +1,10 @@
 export default class DeliveryArea extends PIXI.Sprite {
 
   constructor() {
-    super(PIXI.Texture.fromImage("images/combiner.png"));
+    super(PIXI.Texture.fromImage("images/deliverArea.png"));
 
-    this.width = 50;
-    this.height = 50;
+    this.boxWidth = 252
+    this.boxHeight = 268
 
     this.droppable({ accepts: "draggable" });
   }

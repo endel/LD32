@@ -5,15 +5,18 @@ var combinations = require('../data/elements').combinations;
 export default class WorkingArea extends PIXI.Sprite {
 
   constructor(inventory) {
-    super(PIXI.Texture.fromImage("images/combiner.png"));
+    super(PIXI.Texture.fromImage("images/craftArea.png"));
 
     this.inventory = inventory;
 
     this.elements = []
     this.maxElements = 2;
 
-    this.width = window.innerWidth / 2;
-    this.height = window.innerHeight / 2;
+    this.boxWidth = 588
+    this.boxHeight = 376
+
+    this.width = SCREEN_WIDTH / 2;
+    this.height = SCREEN_HEIGHT / 2;
 
     this.droppable({
       accepts: "draggable",
