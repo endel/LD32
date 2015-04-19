@@ -5,15 +5,12 @@ var combinations = require('../data/elements').combinations;
 export default class WorkingArea extends PIXI.Sprite {
 
   constructor(inventory) {
-    super(PIXI.Texture.fromImage("images/craftArea.png"));
+    super(PIXI.Texture.fromFrame("craftArea.png"));
 
     this.inventory = inventory;
 
     this.elements = []
     this.maxElements = 2;
-
-    this.boxWidth = 588
-    this.boxHeight = 376
 
     this.width = SCREEN_WIDTH / 2;
     this.height = SCREEN_HEIGHT / 2;

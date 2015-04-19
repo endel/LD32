@@ -4,12 +4,11 @@ export default class TalkBox extends PIXI.DisplayObjectContainer {
     super();
 
     this.margin = 11;
-    this.boxHeight = 176;
 
-    this.textToShow = ""
+    this.textToShow = "";
     this.textAppendCount = 0;
 
-    this.bg = new PIXI.Sprite(PIXI.Texture.fromImage("images/textBox.png"))
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("textBox.png"))
     this.addChild(this.bg);
 
     this.image = new PIXI.Sprite();
@@ -29,19 +28,21 @@ export default class TalkBox extends PIXI.DisplayObjectContainer {
     this.addChild(this.image);
     this.addChild(this.text);
 
-    this.talk(PIXI.Texture.fromImage("images/picture.png"), "Consectetur id quae ea eius atque! Totam quaerat sunt doloribus vero est doloribus sapiente unde doloribus, molestiae. Nihil sit non cumque rem facilis! Quas architecto consectetur veritatis corrupti magni voluptatum.")
+    events.on('talk', function() { this.talk.apply(this, arguments); }.bind(this))
+
+    this.talk("pictureCustomer_0001.png", "Consectetur id quae ea eius atque! Totam quaerat sunt doloribus vero est doloribus sapiente unde doloribus, molestiae. Nihil sit non cumque rem facilis! Quas architecto consectetur veritatis corrupti magni voluptatum.")
   }
 
-  talk(texture, text) {
-    this.image.setTexture(texture);
+  talk(frameId, text) {
+    this.image.setTexture(PIXI.Texture.fromFrame(frameId));
     this.textToShow = text
+    this.textAppendCount = 0;
     this.interval = setInterval(this.appendText.bind(this), 10);
   }
 
   appendText() {
     if (this.textAppendCount == this.textToShow.length) {
       clearInterval(this.interval);
-      return;
     }
 
     this.text.setText( this.textToShow.substr(0, this.textAppendCount) );

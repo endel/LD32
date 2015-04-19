@@ -1,3 +1,5 @@
+import ParticleEmitter from './ParticleEmitter';
+
 var _default = require('../data/elements').default;
 var combinations = require('../data/elements').combinations;
 
@@ -36,7 +38,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
       this.label.parent.removeChild(this.label);
     }
 
-    this.icon = new PIXI.Sprite(PIXI.Texture.fromImage("images/elements/" + identifier + ".png"));
+    this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame("element-" + identifier + ".png"));
     this.addChild(this.icon)
 
     this.data = _default[ identifier ] || combinations[ identifier ];
@@ -75,9 +77,17 @@ export default class Element extends PIXI.DisplayObjectContainer {
     }
 
     if (result) {
-      console.log("Result: ", result)
+      var messages = ["Yey.", "It worked.", "Sounds good."]
+      events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+
       this.setIdentifier(result);
     } else {
+
+      var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."]
+      events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+      ParticleEmitter
+      this.parent.addChild(new ParticleEmitter)
+
       this.remove();
     }
   }

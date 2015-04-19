@@ -3,10 +3,8 @@ export default class Hud extends PIXI.DisplayObjectContainer {
   constructor(identifier, isBase = true) {
     super();
 
-    this.bg = new PIXI.Sprite(PIXI.Texture.fromImage("images/hudBar.png"));
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("hudBar.png"));
     this.addChild(this.bg);
-
-    this.boxHeight = 72;
 
     this.waveLabel = new PIXI.Text("1", {
       font: LARGE_FONT,

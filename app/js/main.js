@@ -15,8 +15,11 @@ window.LARGE_FONT = '32px emulogicregular'
 window.SCREEN_WIDTH = 1136
 window.SCREEN_HEIGHT = 640
 
+import EventEmitter from 'wolfy87-eventemitter';
+window.events = new EventEmitter()
+
 import GameController from './GameController'
-import Intro from './Intro'
+import Loader from './screens/Loader'
 
 window.renderer = new PIXI.WebGLRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, {
   antialias: false,
@@ -25,5 +28,5 @@ window.renderer = new PIXI.WebGLRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, {
 document.body.appendChild(renderer.view);
 
 window.controller = new GameController();
-controller.setStage(new Intro)
+controller.setStage(new Loader)
 controller.start();

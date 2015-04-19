@@ -5,10 +5,7 @@ var elements = require('../data/elements');
 export default class Inventory extends PIXI.Sprite {
 
   constructor() {
-    super(PIXI.Texture.fromImage("images/inventory.png"));
-
-    this.boxWidth = 244;
-    this.boxHeight = 380;
+    super(PIXI.Texture.fromFrame("inventory.png"));
 
     this.itemsY = 100
     this.itemsMarginY = 4

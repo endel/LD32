@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "pixi.js": "~2.2.9",
+    "wolfy87-eventemitter": "~4.2.11",
     "gulp-gh-pages": "~0.5.1"
   },
   "devDependencies": {
+    "spritesheet-js": "^1.0.5",
     "autoprefixer-core": "^5.1.7",
     "browser-sync": "^2.2.1",
     "del": "^1.1.1",

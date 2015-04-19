@@ -13,6 +13,8 @@ var through2 = require('through2');
 var browserify = require('browserify');
 var babelify = require('babelify');
 
+var spritesheet = require('spritesheet-js');
+
 gulp.task('stylesheet', ['sprites'], function () {
   return gulp.src('app/css/main.styl')
     .pipe($.sourcemaps.init())
@@ -105,6 +107,22 @@ gulp.task('html', ['stylesheet'], function () {
 });
 
 gulp.task('images', function () {
+  spritesheet('app/images/*.png', {
+    format: 'pixi.js',
+    path: 'dist'
+  }, function (err) {
+    if (err) throw err;
+    console.log('spritesheet successfully generated');
+  });
+
+  spritesheet('app/images/*.png', {
+    format: 'pixi.js',
+    path: '.tmp'
+  }, function (err) {
+    if (err) throw err;
+    console.log('spritesheet successfully generated');
+  });
+
   return gulp.src('app/images/**/*')
     .pipe($.cache($.imagemin({
       progressive: true,
