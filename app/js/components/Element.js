@@ -3,6 +3,8 @@ import ParticleEmitter from './ParticleEmitter';
 var _default = require('../data/elements').default;
 var combinations = require('../data/elements').combinations;
 
+var lastInteractionPoint = {x: null, y: null};
+
 export default class Element extends PIXI.DisplayObjectContainer {
 
   constructor(identifier, isBase = true) {
@@ -12,6 +14,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
     this.setIdentifier(identifier);
     this.isBase = isBase
+    this.isDelivering = false;
 
     this.draggable({
       label: (isBase ? "inventory" : "working"),
@@ -20,8 +23,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
       cursor: "move",
       helper: (isBase ? "clone" : "original"),
       cursorAt: [ this.width / 2, this.height / 2 ],
-      // start: this.dragStart.bind(this),
-      // drag: this.dragging.bind(this)
+      start: this.dragStart.bind(this),
+      stop: this.dragStop.bind(this)
     });
 
     this.droppable({
@@ -59,7 +62,25 @@ export default class Element extends PIXI.DisplayObjectContainer {
     this.parent.removeChild(this);
   }
 
-  onDrop(element, cursor) {
+  dragStart(element, evt) {
+    sounds.play('game_choose_item')
+    // cancel delivery if this element is being delivered
+    if (this.isDelivering) {
+      events.emit('cancel-delivery');
+    }
+    lastInteractionPoint = evt.global.clone();
+  }
+
+  dragStop(element, evt) {
+    // need to check this on drop + drag stop
+    if (lastInteractionPoint.x !== evt.global.x &&
+        lastInteractionPoint.y !== evt.global.y) {
+      sounds.play('game_drop_item')
+    }
+    lastInteractionPoint = evt.global.clone();
+  }
+
+  onDrop(element, evt) {
     let result = this.combine(element);
 
     // cancel event when trying to drop directly on inventory
@@ -79,7 +100,9 @@ export default class Element extends PIXI.DisplayObjectContainer {
     if (result) {
       var messages = ["Yey.", "It worked.", "Sounds good."]
       events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
-      sounds.play('craft-success')
+
+      sounds.play('game_craft_success')
+      lastInteractionPoint = evt.global.clone();
 
       this.setIdentifier(result);
     } else {
@@ -87,7 +110,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
       var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."]
       events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
 
-      sounds.play('craft-fail')
+      sounds.play('game_craft_fail')
+      lastInteractionPoint = evt.global.clone();
 
       // TODO: this is not working!
       var emitter = new ParticleEmitter();

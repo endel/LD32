@@ -32,7 +32,6 @@ export default class Loader extends PIXI.Stage {
   }
 
   incrementLoader() {
-    debugger;
     this.loadCounter++;
 
     if (this.loadCounter == this.maxLoadCounter) {
