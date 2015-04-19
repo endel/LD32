@@ -12,27 +12,40 @@ export default class Combiner extends PIXI.Sprite {
     this.elements = []
     this.maxElements = 2;
 
-    this.droppable({ accepts: "draggable", drop: this.onDrop.bind(this) });
+    this.droppable({ accepts: "draggable", drop: this.onDrop.bind(this), stop: this.onDropStop.bind(this) });
   }
 
   get isEmpty() {
     return this.elements.length == 0;
   }
 
-  remove(element) {
-    this.elements.splice(this.elements.indexOf(element), 1);
+  remove(element, splice = true) {
+    element.parent.removeChild(element);
+    element.combiner = null;
+    if (splice) {
+      this.elements.splice(this.elements.indexOf(element), 1);
+    }
+  }
+
+  clearElements() {
   }
 
   onDrop(originalElement, mouse) {
     var element = originalElement;
     var dragOptions = element.dragOptions;
 
-    if (this.elements.length < this.maxElements) {
+    console.log("Elements: ", this.elements.length);
 
+    if (this.elements.length < this.maxElements) {
       if (element.isBase) {
-        element = element.copy();
-        originalElement.x = originalElement.startX;
-        originalElement.y = originalElement.startY;
+
+        element = new Element(originalElement.identifier, false);
+        element.x = originalElement.dragElement.x;
+        element.y = originalElement.dragElement.y;
+        this.parent.addChild(element);
+
+        dragOptions.revert = true;
+        dragOptions.revertDuration = 0;
 
       } else {
         // base elements are not removed from inventory
@@ -43,14 +56,26 @@ export default class Combiner extends PIXI.Sprite {
       this.elements.push(element)
 
       let result = this.combine();
-      if (result) {
-        this.inventory.addElement(new Element(result, false));
+      if (this.elements.length == 2) {
+        for (var i=0; i < this.elements.length; i++) {
+          this.remove(this.elements[i], false);
+        }
+
+        if (result) {
+          this.inventory.addElement(new Element(result, false));
+        }
+
+        this.elements = [];
       }
 
     } else {
       dragOptions.revert = true;
     }
 
+  }
+
+  onDropStop(element, move) {
+    console.log("on drop stop!")
   }
 
   combine() {

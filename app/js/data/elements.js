@@ -9,6 +9,7 @@ export default {
   "combinations": {
     "verde": [ "amarelo", "azul" ],
     "roxo": [ "vermelho", "azul" ],
+    "laranja": [ "amarelo", "vermelho" ],
   }
 
 }
