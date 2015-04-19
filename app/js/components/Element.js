@@ -59,18 +59,19 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
   onDrop(element, cursor) {
     let result = this.combine(element);
+
+    if (element.isBase) {
+      element.dragOptions.revert = true;
+      element.dragOptions.revertDuration = 0;
+    } else {
+      element.remove();
+    }
+
     if (result) {
-
-      if (element.isBase) {
-        element.dragOptions.revert = true;
-        element.dragOptions.revertDuration = 0;
-      } else {
-        element.remove();
-      }
-
       console.log("Result: ", result)
       this.setIdentifier(result);
-      // this.inventory.addElement(new Element(result, false));
+    } else {
+      this.remove();
     }
   }
 
