@@ -60,6 +60,13 @@ export default class Element extends PIXI.DisplayObjectContainer {
   onDrop(element, cursor) {
     let result = this.combine(element);
 
+    // cancel event when trying to drop directly on inventory
+    if (this.isBase) {
+      element.dragOptions.revert = true;
+      element.dragOptions.revertDuration = 0;
+      return;
+    }
+
     if (element.isBase) {
       element.dragOptions.revert = true;
       element.dragOptions.revertDuration = 0;
