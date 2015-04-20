@@ -40,11 +40,13 @@ export default class Craft extends PIXI.Stage {
       SCREEN_WIDTH,
       SCREEN_HEIGHT
     );
-    this.bg.y = this.hud.height;
+
+    var hudHeight = 72;
+    this.bg.y = hudHeight;
     this.addChild(this.bg);
 
     this.inventory.x = 10;
-    this.inventory.y = this.hud.height + 4;
+    this.inventory.y = hudHeight + 4;
     this.addChild(this.inventory)
 
     this.workingArea.x = this.inventory.x + this.inventory.width + boxMargin
