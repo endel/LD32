@@ -44,18 +44,13 @@ export default class WaveController {
     this.currentWave++;
 
     // 1.5 seconds until next  wave
-    setTimeout(this.start.bind(this), 1500);
+    setTimeout(this.start.bind(this), 3000);
   }
 
   onDeliver(element) {
-    let performance = this.waveData.responses[ element.identifier ];
+    let performance = this.waveData.responses[ element.identifier ] || "bad";
 
-    if (performance) {
-      // good or great
-      events.emit('talk', "pictureCustomer_0001.png", this.waveData.feedbacks[ performance ]);
-    } else {
-      performance = "bad"
-    }
+    events.emit('talk', "pictureCustomer_0001.png", this.waveData.feedbacks[ performance ]);
 
     this.hud.addProgress(performance);
     this.nextWave()
