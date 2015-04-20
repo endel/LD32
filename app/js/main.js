@@ -7,6 +7,7 @@ require('./vendor/pixi.draggable')
 require('./vendor/pixi.particles')
 
 require('./vendor/generatorRuntime') // for es6 generators, used in WaveController
+require('./vendor/array.shuffle') // global shuffle method
 
 import EventEmitter from 'wolfy87-eventemitter';
 import {Howl, Howler} from 'howler';

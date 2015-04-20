@@ -28,6 +28,10 @@ export default class WaveController {
 
   start() {
     events.emit('talk', "pictureCustomer_0001.png", this.waveData.text);
+
+    // update wave number label
+    this.hud.waveLabel.setText(this.currentWave+1);
+
     this.inventory.setup(this.waveData.inventory);
   }
 
