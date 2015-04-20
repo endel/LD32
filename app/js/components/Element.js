@@ -66,7 +66,9 @@ export default class Element extends PIXI.DisplayObjectContainer {
   }
 
   remove() {
-    this.parent.removeChild(this);
+    if (this.parent) {
+      this.parent.removeChild(this);
+    }
   }
 
   dragStart(element, evt) {

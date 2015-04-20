@@ -27,7 +27,8 @@ export default class Craft extends PIXI.Stage {
     this.waveController = new WaveController({
       deliveryArea: this.deliveryArea,
       hud: this.hud,
-      inventory: this.inventory
+      inventory: this.inventory,
+      workingArea: this.workingArea
     });
 
     this.bg = new PIXI.TilingSprite(

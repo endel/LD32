@@ -25,6 +25,15 @@ export default class WorkingArea extends PIXI.Sprite {
     return this.elements.length == 0;
   }
 
+  clear() {
+    for (var i=0; i<this.elements.length; i++) {
+      if (this.elements[i].parent) {
+        this.elements[i].parent.removeChild(this.elements[i]);
+      }
+    }
+    this.elements = [];
+  }
+
   onDrop(originalElement, mouse) {
     var element = originalElement;
     var dragOptions = element.dragOptions;
@@ -39,6 +48,8 @@ export default class WorkingArea extends PIXI.Sprite {
       dragOptions.revert = true;
       dragOptions.revertDuration = 0;
     }
+
+    this.elements.push(element);
 
     element.workingArea = this;
   }

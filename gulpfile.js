@@ -128,6 +128,7 @@ gulp.task('audio', function () {
     fs.writeFile('app/js/data/sound_effects.json', json);
   });
 
+  options.output = '.tmp/sound/sound_effects';
   audiosprite(files, options, function(err, obj) {
     if (err) { return console.error(err); }
   });

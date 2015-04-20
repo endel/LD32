@@ -6,6 +6,7 @@ Install dependencies:
 ```
 npm install
 bower install
+brew install imagemagick
 ```
 
 Building image and audio aprites:

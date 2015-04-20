@@ -6,6 +6,7 @@ export default class WaveController {
     this.deliveryArea = options.deliveryArea;
     this.hud = options.hud;
     this.inventory = options.inventory;
+    this.workingArea = options.workingArea;
 
     this.deliveryArea.onDeliver = this.onDeliver.bind(this);
 
@@ -43,7 +44,7 @@ export default class WaveController {
   }
 
   timeTick() {
-    if (--this.currentTime > 0) {
+    if (--this.currentTime >= 0) {
       this.hud.timeLabel.setText(this.currentTime);
     } else {
       this.onTimeFailure();
@@ -54,6 +55,9 @@ export default class WaveController {
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
     }
+
+    // clear working area
+    this.workingArea.clear();
 
     if (this.sectionIndex + 1 >= waves[this.section].length) {
       this.sectionIndex = 0;
@@ -83,7 +87,7 @@ export default class WaveController {
       "We ran out of time! We lost this round!",
       "Are you nuts, smith? We can't fight empty handed! We lost that one!"
     ];
-    events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+    events.emit('talk', "pictureCustomer_0001.png", messages[ Math.floor((Math.random() * messages.length)) ]);
 
     this.hud.addProgress("bad");
 
