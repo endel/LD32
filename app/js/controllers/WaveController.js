@@ -35,9 +35,9 @@ export default class WaveController {
 
   *sectionList() {
     yield "intro";
-    yield "easy";
-    yield "medium";
-    yield "hard";
+    // yield "easy";
+    // yield "medium";
+    // yield "hard";
   }
 
   start() {

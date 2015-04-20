@@ -35,11 +35,7 @@ export default class Craft extends PIXI.Stage {
     });
     window.waveController = this.waveController;
 
-    this.bg = new PIXI.TilingSprite(
-      PIXI.Texture.fromFrame("inGameBG.png"),
-      SCREEN_WIDTH,
-      SCREEN_HEIGHT
-    );
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameBG.png"));
 
     var hudHeight = 72;
     this.bg.y = hudHeight;
