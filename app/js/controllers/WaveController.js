@@ -17,6 +17,9 @@ export default class WaveController {
 
     this.currentWave = 0;
     this.maxWaves = 10;
+
+    this.timeInterval = null;
+    this.currentTime = 10;
   }
 
   *sectionList() {
@@ -29,13 +32,28 @@ export default class WaveController {
   start() {
     events.emit('talk', "pictureCustomer_0001.png", this.waveData.text);
 
+    this.timeInterval = setInterval(this.timeTick.bind(this), 1000);
+    this.currentTime = this.waveData.countdown + 1;
+    this.timeTick();
+
     // update wave number label
     this.hud.waveLabel.setText(this.currentWave+1);
 
     this.inventory.setup(this.waveData.inventory);
   }
 
+  timeTick() {
+    if (--this.currentTime > 0) {
+      this.hud.timeLabel.setText(this.currentTime);
+    } else {
+      this.onTimeFailure();
+    }
+  }
+
   nextWave() {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
 
     if (this.sectionIndex + 1 >= waves[this.section].length) {
       this.sectionIndex = 0;
@@ -64,8 +82,11 @@ export default class WaveController {
     var messages = [
       "We ran out of time! We lost this round!",
       "Are you nuts, smith? We can't fight empty handed! We lost that one!"
-    ]
+    ];
     events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+
+    this.hud.addProgress("bad");
+
     this.nextWave()
   }
 

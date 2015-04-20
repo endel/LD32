@@ -1,4 +1,4 @@
-window.shuffle = (array) {
+window.shuffle = function(array) {
   var currentIndex = array.length, temporaryValue, randomIndex ;
 
   // While there remain elements to shuffle...

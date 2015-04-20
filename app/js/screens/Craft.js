@@ -10,6 +10,12 @@ export default class Craft extends PIXI.Stage {
   constructor() {
     super();
 
+    sounds.stop('game_music')
+
+    // play background sound
+    sounds.fade(0.0, 1.0, 2000);
+    sounds.play('game_background');
+
     var boxMargin = 16;
 
     this.hud = new Hud();

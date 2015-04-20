@@ -112,7 +112,14 @@ gulp.task('audio', function () {
     return 'app/sounds/' + f;
   });
 
-  audiosprite(files, { format: 'howler', output: 'dist/sound/sound_effects', path: 'sound' }, function(err, obj) {
+  var options = {
+    format: 'howler',
+    output: 'dist/sound/sound_effects',
+    path: 'sound',
+    loop: ['game_background', 'intro_background']
+  };
+
+  audiosprite(files, options, function(err, obj) {
     if (err) {
       return console.error(err);
     }
@@ -121,7 +128,7 @@ gulp.task('audio', function () {
     fs.writeFile('app/js/data/sound_effects.json', json);
   });
 
-  audiosprite(files, { format: 'howler', output: '.tmp/sound/sound_effects', path: 'sound'  }, function(err, obj) {
+  audiosprite(files, options, function(err, obj) {
     if (err) { return console.error(err); }
   });
 });
