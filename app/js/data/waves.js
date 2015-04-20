@@ -18,7 +18,7 @@ export default {
   "easy": [
     {
       "text": "More enemies have arrived, but all our steel is gone!",
-      "countdown": 20,
+      "countdown": 18,
       "inventory": ["iron", "copper", "leather"],
       "responses": {
         "kings-sword": "great",
@@ -60,7 +60,7 @@ export default {
     },
     {
       "text": "The village masons came to help!",
-      "countdown": 15,
+      "countdown": 14,
       "inventory": ["wood", "stone", "sand"],
       "responses": {
         "wood-spear": "great",
@@ -118,7 +118,7 @@ export default {
     },
     {
       "text": "The enemies have battle dogs! We are doomed!",
-      "countdown": 15,
+      "countdown": 14,
       "inventory": ["ragdoll", "pepper", "lemon"],
       "responses": {
         "super-hot-doll": "great",
@@ -146,7 +146,7 @@ export default {
     },
     {
       "text": "Damn, they have clerigs! The enemies are healing their wounded!",
-      "countdown": 15,
+      "countdown": 14,
       "inventory": ["pillow", "beer-jug", "pumpkin"],
       "responses": {
         "beer-hammer": "great",
@@ -176,7 +176,7 @@ export default {
     },
     {
       "text": "The enemies brought pretty witches to enchant our soldiers! We need to do something!",
-      "countdown": 10,
+      "countdown": 8,
       "inventory": ["potion", "perfume", "cigarrete", "salt"],
       "responses": {
         "ogre-potion": "great",
