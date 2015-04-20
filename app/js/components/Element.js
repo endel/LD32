@@ -154,7 +154,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
     if (result) {
       var messages = ["Yey.", "It worked.", "Sounds good."]
-      events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+      events.emit('talk', 'blacksmith', 'happy', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_success')
 
@@ -164,7 +164,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
     } else {
 
       var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."]
-      events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
+      events.emit('talk', 'blacksmith', 'sad', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_fail')
       lastInteractionPoint = evt.global.clone();

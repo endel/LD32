@@ -38,7 +38,7 @@ export default class Hud extends PIXI.DisplayObjectContainer {
 
   addProgress(kind) {
     var points = { 'bad': 0, 'good': 1, 'great': 2 }
-    var colors = { 'bad': '#C20A0A', 'good': '#FFC600', 'great': '#18A52A' }
+    var colors = { 'bad': '#f10000', 'good': '#FFC600', 'great': '#15e730' }
 
     var frameName = 'progress-' + kind + '.png';
     var progressIcon = new PIXI.Sprite.fromFrame(frameName);
