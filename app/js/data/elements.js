@@ -62,7 +62,7 @@ export default {
       "label": "Fiber Sword",
       "requirements": ["soft-sword", "leather"]
     },
-    "soft-sword " : {
+    "soft-sword" : {
       "label": "Soft Sword",
       "requirements": ["cotton", "leather"]
     },
