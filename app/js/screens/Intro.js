@@ -4,7 +4,7 @@ export default class Intro extends PIXI.Stage {
 
   constructor() {
     super();
-    sounds.play('game_music')
+    sounds.play('intro_background')
 
     var background = new PIXI.Sprite(PIXI.Texture.fromFrame("home.png"));
     this.addChild(background);

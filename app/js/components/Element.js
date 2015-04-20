@@ -61,17 +61,37 @@ export default class Element extends PIXI.DisplayObjectContainer {
       this.label.parent.removeChild(this.label);
     }
 
+    let performanceOnThisWave = waveController.getElementPerformance(identifier);
+    if (performanceOnThisWave == "great")
+    {
+      sounds.play("game_craft_perfect");
+      sounds.play("game_craft_success");
+    }else if(performanceOnThisWave == "good") {
+      sounds.play("game_craft_success");
+    }
+
     this.data = _default[ identifier ] || combinations[ identifier ];
     this.identifier = identifier;
 
-    this.label = new PIXI.Text(this.data.label, {
-      font: DEFAULT_FONT,
-      fill: "#fff",
-      align: "center",
-      wordWrap: true,
-      wordWrapWidth: 200
-    });
-    this.addChild(this.label);
+    if(performanceOnThisWave == "great"){
+      this.label = new PIXI.Text(this.data.label, {
+        font: DEFAULT_FONT,
+        fill: "#ffff00",
+        align: "center",
+        wordWrap: true,
+        wordWrapWidth: 200
+      });
+      this.addChild(this.label);
+    }else{
+      this.label = new PIXI.Text(this.data.label, {
+        font: DEFAULT_FONT,
+        fill: "#fff",
+        align: "center",
+        wordWrap: true,
+        wordWrapWidth: 200
+      });
+      this.addChild(this.label);
+    }
 
     var frameId = "element-" + identifier + ".png";
     if (PIXI.TextureCache[ frameId ]) {
@@ -137,6 +157,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
       events.emit('talk', 'pictureBlacksmith_0001.png', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_success')
+
       lastInteractionPoint = evt.global.clone();
 
       this.setIdentifier(result);

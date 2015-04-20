@@ -30,6 +30,7 @@ window.SCREEN_HEIGHT = 640
 
 // music / sound effects
 window.sounds = new Howl(require('./data/sound_effects.json'));
+window.soundsBackground = new Howl(require('./data/sound_effects.json'));
 
 window.events = new EventEmitter()
 

@@ -10,13 +10,16 @@ export default class Craft extends PIXI.Stage {
   constructor() {
     super();
 
-    sounds.stop('game_music')
+    sounds.stop('intro_background')
 
     // play background sound
     sounds.fade(0.0, 1.0, 2000);
     sounds.play('game_background');
+    soundsBackground.fade(0.0, 1.0, 100);
+    soundsBackground.play('game_music') 
 
-    var boxMargin = 16;
+
+    var boxMargin = 16; 
 
     this.hud = new Hud();
     this.talkBox = new TalkBox();
@@ -30,6 +33,7 @@ export default class Craft extends PIXI.Stage {
       inventory: this.inventory,
       workingArea: this.workingArea
     });
+    window.waveController = this.waveController;
 
     this.bg = new PIXI.TilingSprite(
       PIXI.Texture.fromFrame("inGameBG.png"),
