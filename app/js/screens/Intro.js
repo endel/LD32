@@ -20,12 +20,12 @@ export default class Intro extends PIXI.Stage {
 
     var cloud1 = new PIXI.Sprite(PIXI.Texture.fromFrame("homecloud1.png"));
     cloud1.y = 120;
-    cloud1.x = SCREEN_WIDTH/2-100;
+    cloud1.x = SCREEN_WIDTH + cloud1.width;
     this.addChild(cloud1);
 
     var cloud2 = new PIXI.Sprite(PIXI.Texture.fromFrame("homecloud2.png"));
     cloud2.y = 50;
-    cloud2.x = SCREEN_WIDTH-100;
+    cloud2.x = SCREEN_WIDTH + cloud2.width;
     this.addChild(cloud2);
 
     var store = new PIXI.Sprite(PIXI.Texture.fromFrame("homestore.png"));
@@ -93,6 +93,9 @@ export default class Intro extends PIXI.Stage {
     TweenMax.to(ground2, 2.0, { x: 0, ease: Power1.easeOut })
     TweenMax.from(blacksmithTalk, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.from(blacksmithIdle, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
+
+    TweenMax.to(cloud1, 40.0, { x: -300, repeat: 10 })
+    TweenMax.to(cloud2, 50.0, { x: -300, delay:3, repeat: 10 })
 
     var startLabel = new PIXI.Graphics();
     startLabel.alpha = 0
