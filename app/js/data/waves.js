@@ -22,7 +22,7 @@ export default {
       "inventory": ["iron", "copper", "leather"],
       "responses": {
         "kings-sword": "great",
-        "leathered-sword ": "good"
+        "leathered-sword": "good"
       },
       "feedbacks": {
         "great": "The king's sword! That was a legend to be told!",
@@ -94,7 +94,7 @@ export default {
       "inventory": ["cat", "boots", "straw"],
       "responses": {
         "battle-cat": "great",
-        "puss-in-boots ": "good"
+        "puss-in-boots": "good"
       },
       "feedbacks": {
         "great": "I hope you trained this cats for more cause the enemy couldn't take them!",

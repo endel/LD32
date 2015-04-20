@@ -105,6 +105,8 @@ export default class WaveController {
     let performance = this.getElementPerformance(element.identifier);
     this.responses.push(performance);
 
+    events.emit('delivered-performance', performance);
+
     if(performance == "bad"){
       sounds.play('game_wave_lose');
     }else{

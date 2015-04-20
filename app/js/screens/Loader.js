@@ -10,7 +10,7 @@ export default class Loader extends PIXI.Stage {
 
     var that = this;
 
-    this.indicator = new PIXI.Sprite(PIXI.Texture.fromImage("images/pictureBlacksmith_0001.png"));
+    this.indicator = new PIXI.Sprite(PIXI.Texture.fromImage("images/loadingicon.png"));
     this.indicator.anchor.x = 0.5;
     this.indicator.anchor.y = 0.5;
     this.indicator.x = SCREEN_WIDTH / 2;

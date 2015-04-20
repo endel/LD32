@@ -82,8 +82,123 @@ export default class Intro extends PIXI.Stage {
     {
         blacksmithTalk.visible = !blacksmithTalk.visible;
         blacksmithIdle.visible = !blacksmithIdle.visible;
+        welcome.visible = blacksmithIdle.visible;
     }
     
+    var credits = new PIXI.Sprite(PIXI.Texture.fromFrame("homecredits.png"));
+    credits.anchor.x = 0.5;
+    credits.x = SCREEN_WIDTH/2;
+    credits.y = SCREEN_HEIGHT - 60;
+    this.addChild(credits);
+
+    var epa = new PIXI.Graphics();
+    epa.alpha = 0
+    epa.beginFill(0xFFFF00);
+    epa.lineStyle(5, 0xFF0000);
+    epa.drawRect(0, 0, 200, 50);
+    epa.x = 60;
+    epa.y = SCREEN_HEIGHT - 60;
+    epa.interactive = true;
+    epa.buttonMode = true;
+    epa.click = epa.tap = this.openPortfolio.bind("epa");
+    this.addChild(epa);
+
+    var epaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
+    epaabout.interactive = true;
+    epaabout.anchor.x = 0;
+    epaabout.anchor.y = 1
+    epaabout.x = epa.x;
+    epaabout.y = SCREEN_HEIGHT - 70;
+    epaabout.alpha = 0;
+    this.addChild(epaabout);
+
+    epa.mouseover = this.showAbout.bind(epaabout);
+    epa.mouseout = this.hideAbout.bind(epaabout);
+
+
+    var endel = new PIXI.Graphics();
+    endel.alpha = 0
+    endel.beginFill(0xFFFF00);
+    endel.lineStyle(5, 0xFF0000);
+    endel.drawRect(0, 0, 200, 50);
+    endel.x = 320;
+    endel.y = SCREEN_HEIGHT - 60;
+    endel.interactive = true;
+    endel.buttonMode = true;
+    endel.click = endel.tap = this.openPortfolio.bind("endel");
+    this.addChild(endel);
+
+    var endelabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutProg.png"));
+    endelabout.interactive = true;
+    endelabout.anchor.x = 0;
+    endelabout.anchor.y = 1
+    endelabout.x = endel.x;
+    endelabout.y = SCREEN_HEIGHT - 70;
+    endelabout.alpha = 0;
+    this.addChild(endelabout);
+
+    endel.mouseover = this.showAbout.bind(endelabout);
+    endel.mouseout = this.hideAbout.bind(endelabout);
+
+    var testa = new PIXI.Graphics();
+    testa.alpha = 0
+    testa.beginFill(0xFFFF00);
+    testa.lineStyle(5, 0xFF0000);
+    testa.drawRect(0, 0, 250, 50);
+    testa.x = 550;
+    testa.y = SCREEN_HEIGHT - 60;
+    testa.interactive = true;
+    testa.buttonMode = true;
+    testa.click = testa.tap = this.openPortfolio.bind("testa");
+    this.addChild(testa);
+
+    var testaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
+    testaabout.interactive = true;
+    testaabout.anchor.x = 0;
+    testaabout.anchor.y = 1
+    testaabout.x = testa.x + 40;
+    testaabout.y = SCREEN_HEIGHT - 70;
+    testaabout.alpha = 0;
+    this.addChild(testaabout);
+
+    testa.mouseover = this.showAbout.bind(testaabout);
+    testa.mouseout = this.hideAbout.bind(testaabout);
+
+    var tomo = new PIXI.Graphics();
+    tomo.alpha = 0
+    tomo.beginFill(0xFFFF00);
+    tomo.lineStyle(5, 0xFF0000);
+    tomo.drawRect(0, 0, 200, 50);
+    tomo.x = 860;
+    tomo.y = SCREEN_HEIGHT - 60;
+    tomo.interactive = true;
+    tomo.buttonMode = true;
+    tomo.click = tomo.tap = this.openPortfolio.bind("tomo");
+    this.addChild(tomo);
+
+
+    var tomoabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutArt.png"));
+    tomoabout.interactive = true;
+    tomoabout.anchor.x = 0;
+    tomoabout.anchor.y = 1
+    tomoabout.x = tomo.x;
+    tomoabout.y = SCREEN_HEIGHT - 70;
+    tomoabout.alpha = 0;
+    this.addChild(tomoabout);
+
+    tomo.mouseover = this.showAbout.bind(tomoabout);
+    tomo.mouseout = this.hideAbout.bind(tomoabout);
+
+
+    var welcome = new PIXI.Sprite(PIXI.Texture.fromFrame("homeballon1.png"));
+    welcome.anchor.x = 0;
+    welcome.anchor.y = 0;
+    welcome.x = blacksmithTalk.x + 50;
+    welcome.y = blacksmithTalk.y - 75;
+    welcome.visible = true;
+    welcome.alpha = 0;
+    this.addChild(welcome);
+
 
 
     // move guys
@@ -91,9 +206,10 @@ export default class Intro extends PIXI.Stage {
     TweenMax.from(balcony, 2.0, { x: SCREEN_WIDTH + store.width/2, ease: Power1.easeOut })
     TweenMax.to(ground1, 2.0, { x: -SCREEN_WIDTH, ease: Power1.easeOut })
     TweenMax.to(ground2, 2.0, { x: 0, ease: Power1.easeOut })
+    TweenMax.from(credits, 2.0, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut })
     TweenMax.from(blacksmithTalk, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.from(blacksmithIdle, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
-
+    TweenMax.to(welcome, 0.2, { alpha:1, delay:2.2, ease: Power1.easeOut })
     TweenMax.to(cloud1, 40.0, { x: -300, repeat: 10 })
     TweenMax.to(cloud2, 50.0, { x: -300, delay:3, repeat: 10 })
 
@@ -113,6 +229,39 @@ export default class Intro extends PIXI.Stage {
     clearInterval(window.faceChange)
     sounds.play('intro_play')
     controller.setStage(new Craft);
+  }
+
+  showAbout()
+  {
+    
+    TweenMax.to(this, 0.2, { alpha:1, ease: Power1.easeOut })
+  }
+
+  hideAbout()
+  {
+    
+    TweenMax.to(this, 0.2, { alpha:0, ease: Power1.easeOut })
+  }
+
+  openPortfolio()
+  {
+    var id = this;
+
+    switch(id)
+    {
+      case "epa":
+        window.open("http://epaneto.com","_blank")
+      break;
+      case "endel":
+        window.open("http://github.com/endel","_blank")
+      break;
+      case "testa":
+        window.open("http://mairatesta.me","_blank")
+      break;
+      case "tomo":
+        window.open("http://sergiotomo.deviantart.com/","_blank")
+      break;
+    }
   }
 
   update() {
