@@ -21,6 +21,8 @@ export default class WaveController {
 
     this.timeInterval = null;
     this.currentTime = 10;
+
+    events.on('element-drop', this.tryStartCountdown.bind(this));
   }
 
   *sectionList() {
@@ -33,7 +35,6 @@ export default class WaveController {
   start() {
     events.emit('talk', "pictureCustomer_0001.png", this.waveData.text);
 
-    this.timeInterval = setInterval(this.timeTick.bind(this), 1000);
     this.currentTime = this.waveData.countdown + 1;
     this.timeTick();
 
@@ -41,6 +42,13 @@ export default class WaveController {
     this.hud.waveLabel.setText(this.currentWave+1);
 
     this.inventory.setup(this.waveData.inventory);
+  }
+
+  tryStartCountdown() {
+    if (!this.timeInterval) {
+      this.timeInterval = setInterval(this.timeTick.bind(this), 1000);
+      this.timeTick();
+    }
   }
 
   timeTick() {
@@ -54,6 +62,7 @@ export default class WaveController {
   nextWave() {
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
+      this.timeInterval = null;
     }
 
     // clear working area
@@ -83,15 +92,22 @@ export default class WaveController {
   }
 
   onTimeFailure() {
-    var messages = [
-      "We ran out of time! We lost this round!",
-      "Are you nuts, smith? We can't fight empty handed! We lost that one!"
-    ];
-    events.emit('talk', "pictureCustomer_0001.png", messages[ Math.floor((Math.random() * messages.length)) ]);
+    // is delivery area with something?
+    // auto-push delivery button!
+    if (this.deliveryArea.button.enabled) {
+      this.deliveryArea.doDeliver();
 
-    this.hud.addProgress("bad");
+    } else {
+      var messages = [
+        "We ran out of time! We lost this round!",
+        "Are you nuts, smith? We can't fight empty handed! We lost that one!"
+      ];
+      events.emit('talk', "pictureCustomer_0001.png", messages[ Math.floor((Math.random() * messages.length)) ]);
 
-    this.nextWave()
+      this.hud.addProgress("bad");
+
+      this.nextWave()
+    }
   }
 
 }

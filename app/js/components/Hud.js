@@ -12,6 +12,7 @@ export default class Hud extends PIXI.DisplayObjectContainer {
       align: "center"
     })
     this.waveLabel.x = 830
+    this.waveLabel.anchor.x = 0.5
     this.addChild(this.waveLabel);
 
     this.timeLabel = new PIXI.Text("10", {
@@ -20,6 +21,7 @@ export default class Hud extends PIXI.DisplayObjectContainer {
       align: "center"
     })
     this.timeLabel.x = 990
+    this.timeLabel.anchor.x = 0.5
     this.addChild(this.timeLabel);
 
     this.waveLabel.y = this.timeLabel.y = 14

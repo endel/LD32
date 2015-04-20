@@ -49,6 +49,7 @@ export default class WorkingArea extends PIXI.Sprite {
       dragOptions.revertDuration = 0;
     }
 
+    events.emit('element-drop', element);
     this.elements.push(element);
 
     element.workingArea = this;
