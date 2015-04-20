@@ -72,7 +72,7 @@ export default {
 
     "long-sword" : {
       "label": "Long Sword",
-      "requirements": ["short-sword", "silver"]
+      "requirements": ["short-sword", "steel"]
     },
     "short-sword" : {
       "label": "Short Sword",
