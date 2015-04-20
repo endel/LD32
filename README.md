@@ -8,6 +8,13 @@ npm install
 bower install
 ```
 
+Building image and audio aprites:
+
+```
+gulp images
+gulp audio
+```
+
 Start local development server
 
 ```
