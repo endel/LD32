@@ -3,6 +3,11 @@ var waves = require('../data/waves');
 export default class WaveController {
 
   constructor(options) {
+
+    waves['easy'] = shuffle(waves['easy']);
+    waves['medium'] = shuffle(waves['medium']);
+    waves['hard'] = shuffle(waves['hard']);
+
     this.deliveryArea = options.deliveryArea;
     this.hud = options.hud;
     this.inventory = options.inventory;
