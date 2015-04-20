@@ -87,18 +87,30 @@ export default class WaveController {
     setTimeout(this.start.bind(this), 3000);
   }
 
+  getElementPerformance(identifier) {
+    return this.waveData.responses[ identifier ] || "bad";
+  }
+
   onDeliver(element) {
-    let performance = this.waveData.responses[ element.identifier ] || "bad";
+    let performance = this.getElementPerformance(element.identifier);
+
+    if(performance == "bad"){
+      sounds.play('game_wave_lose');
+    }else{
+      sounds.play('game_wave_win');
+    }
 
     events.emit('talk', "pictureCustomer_0001.png", this.waveData.feedbacks[ performance ]);
 
     this.hud.addProgress(performance);
+
     this.nextWave()
   }
 
   onTimeFailure() {
     // is delivery area with something?
     // auto-push delivery button!
+
     if (this.deliveryArea.button.enabled) {
       this.deliveryArea.doDeliver();
 
@@ -110,6 +122,7 @@ export default class WaveController {
       events.emit('talk', "pictureCustomer_0001.png", messages[ Math.floor((Math.random() * messages.length)) ]);
 
       this.hud.addProgress("bad");
+      sounds.play('game_wave_lose');
 
       this.nextWave()
     }
