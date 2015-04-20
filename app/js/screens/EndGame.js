@@ -1,4 +1,5 @@
 import ParticleEmitter from '../components/ParticleEmitter';
+import Intro from './Intro';
 
 export default class EndGame extends PIXI.Stage {
 
@@ -8,6 +9,16 @@ export default class EndGame extends PIXI.Stage {
     this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("endgame.png"));
     this.addChild(this.bg);
 
+    this.restartBtn = new PIXI.Sprite(PIXI.Texture.fromFrame("endgameBtn.png"));
+    this.restartBtn.x = SCREEN_WIDTH - this.restartBtn.width - 40;
+    this.restartBtn.y = SCREEN_HEIGHT - this.restartBtn.height - 40;
+    this.restartBtn.interactive = true;
+    this.restartBtn.buttonMode = true;
+    this.restartBtn.click = this.restartBtn.tap = this.restartGame.bind(this);
+    this.addChild(this.restartBtn);
+
+    TweenMax.from(this.restartBtn, 1, { alpha: 0, y: this.restartBtn.y + 10, ease: Power2.easeOut, delay: 1 })
+
     // same from Hud.js
     this.startProgressX = 342;
     this.startProgressY = 282;
@@ -16,6 +27,11 @@ export default class EndGame extends PIXI.Stage {
     this.responses = responses;
     this.setupBullets();
     this.setupScore();
+
+  }
+
+  restartGame() {
+    controller.setStage(new Intro);
   }
 
   setupScore() {
@@ -95,6 +111,11 @@ export default class EndGame extends PIXI.Stage {
   }
 
   update() {
+  }
+
+  dispose() {
+    this.restartBtn.click = this.restartBtn.tap = null;
+    this.removeChildren();
   }
 
 }

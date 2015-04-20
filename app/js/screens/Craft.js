@@ -16,10 +16,10 @@ export default class Craft extends PIXI.Stage {
     sounds.fade(0.0, 1.0, 2000);
     sounds.play('game_background');
     soundsBackground.fade(0.0, 1.0, 100);
-    soundsBackground.play('game_music') 
+    soundsBackground.play('game_music')
 
 
-    var boxMargin = 16; 
+    var boxMargin = 16;
 
     this.hud = new Hud();
     this.talkBox = new TalkBox();
@@ -35,11 +35,7 @@ export default class Craft extends PIXI.Stage {
     });
     window.waveController = this.waveController;
 
-    this.bg = new PIXI.TilingSprite(
-      PIXI.Texture.fromFrame("inGameBG.png"),
-      SCREEN_WIDTH,
-      SCREEN_HEIGHT
-    );
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameBG.png"));
 
     var hudHeight = 72;
     this.bg.y = hudHeight;
@@ -67,6 +63,10 @@ export default class Craft extends PIXI.Stage {
   }
 
   update() {
+  }
+
+  dispose() {
+    this.removeChildren();
   }
 
 }

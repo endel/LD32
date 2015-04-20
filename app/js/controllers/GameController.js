@@ -26,11 +26,16 @@ export default class GameController {
     }
   }
 
-  setStage(stage) {
-    this.currentStage = stage;
+  setStage(stage, transition = null) {
     if (this.stages.indexOf(stage) !== -1) {
       this.stages.push(this.currentStage);
     }
+
+    if (this.currentStage) {
+      this.currentStage.dispose();
+    }
+
+    this.currentStage = stage;
   }
 
   loop() {
