@@ -9,7 +9,7 @@ require('./vendor/pixi.particles')
 import EventEmitter from 'wolfy87-eventemitter';
 import {Howl, Howler} from 'howler';
 
-import GameController from './GameController'
+import GameController from './controllers/GameController'
 import Loader from './screens/Loader'
 
 Math.clamp = function(num, min, max) {

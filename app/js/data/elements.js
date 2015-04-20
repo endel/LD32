@@ -35,11 +35,11 @@ export default {
 
     "long-sword" : {
       "label": "Long Sword",
-      "requirements": ["short sword", "iron"]
+      "requirements": ["short-sword", "iron"]
     },
     "short-sword" : {
       "label": "Short Sword",
-      "requirements": ["iro","iron"]
+      "requirements": ["iron","iron"]
     },
     "leather-toy" : {
       "label": "Leather toy",
@@ -48,7 +48,7 @@ export default {
 
     "king's-sword" : {
       "label": "King's Sword",
-      "requirements": ["leathered sword", "iron"]
+      "requirements": ["leathered-sword", "iron"]
     },
     "leathered-sword" : {
       "label": "Leathered sword",
@@ -60,7 +60,7 @@ export default {
     },
     "fiber-sword" : {
       "label": "Fiber Sword",
-      "requirements": ["soft sword", "leather"]
+      "requirements": ["soft-sword", "leather"]
     },
     "soft-sword " : {
       "label": "Soft Sword",
@@ -68,7 +68,7 @@ export default {
     },
     "stone-sword" : {
       "label": "Stone Sword",
-      "requirements": ["rustic sword", "stone"]
+      "requirements": ["rustic-sword", "stone"]
     },
     "rustic-sword" : {
       "label": "Rustic Sword",
@@ -80,7 +80,7 @@ export default {
     },
     "battle-cat" : {
       "label": "Battle Cat",
-      "requirements": ["pussy cat", "straw"]
+      "requirements": ["pussy-cat", "straw"]
     },
     "puss-in-boots" : {
       "label": "Puss in Boots",
@@ -92,7 +92,7 @@ export default {
     },
     "fire-sword" : {
       "label": "Fire Sword",
-      "requirements": ["light sword", "candles"]
+      "requirements": ["light-sword", "candles"]
     },
     "light-sword" : {
       "label": "Light Sword",
@@ -104,7 +104,7 @@ export default {
     },
     "super-hot-doll" : {
       "label": "Super hot doll",
-      "requirements": ["hot doll", "pepper"]
+      "requirements": ["hot-doll", "pepper"]
     },
     "hot-doll" : {
       "label": "Hot doll",
@@ -116,7 +116,7 @@ export default {
     },
     "explosive-vodka-carrots" : {
       "label": "Explosive Vodka Carrots",
-      "requirements": ["vodka carrots", "powder"]
+      "requirements": ["vodka-carrots", "powder"]
     },
     "vodka-carrots" : {
       "label": "Vodka Carrots",
@@ -128,7 +128,7 @@ export default {
     },
     "ogre-potion" : {
       "label": "Ogre potion",
-      "requirements": ["smelly potion", "salt"]
+      "requirements": ["smelly-potion", "salt"]
     },
     "smelly-potion" : {
       "label": "Smelly Potion",
@@ -140,7 +140,7 @@ export default {
     },
     "super-battle-gnome" : {
       "label": "Super Battle Gnome",
-      "requirements": ["battle gnome", "cape"]
+      "requirements": ["battle-gnome", "cape"]
     },
     "battle-gnome" : {
       "label": "Battle Gnome",

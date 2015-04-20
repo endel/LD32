@@ -3,6 +3,7 @@ import Inventory from '../components/Inventory'
 import DeliveryArea from '../components/DeliveryArea'
 import TalkBox from '../components/TalkBox'
 import Hud from '../components/Hud'
+import WaveController from '../controllers/WaveController'
 
 export default class Craft extends PIXI.Stage {
 
