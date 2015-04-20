@@ -1006,9 +1006,13 @@ module.exports = GameController;
 },{"../components/ParticleManager":7}],11:[function(require,module,exports){
 "use strict";
 
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var EndGame = _interopRequire(require("../screens/EndGame"));
 
 var waves = require("../data/waves");
 
@@ -1034,6 +1038,7 @@ var WaveController = (function () {
 
     this.timeInterval = null;
     this.currentTime = 10;
+    this.responses = { bad: 0, good: 0, great: 0 };
 
     events.on("element-drop", this.tryStartCountdown.bind(this));
   }
@@ -1111,8 +1116,16 @@ var WaveController = (function () {
         this.workingArea.clear();
 
         if (this.sectionIndex + 1 >= Math.clamp(waves[this.section].length, 0, 3)) {
+          var nextSection = this.sectionIterator.next();
+
+          // wave is done! show end game screen
+          if (nextSection.done) {
+            controller.setStage(new EndGame(this.responses));
+            return;
+          }
+
+          this.section = nextSection.value;
           this.sectionIndex = 0;
-          this.section = this.sectionIterator.next().value;
         } else {
           this.sectionIndex++;
         }
@@ -1132,6 +1145,7 @@ var WaveController = (function () {
     onDeliver: {
       value: function onDeliver(element) {
         var performance = this.getElementPerformance(element.identifier);
+        this.responses[performance]++;
 
         if (performance == "bad") {
           sounds.play("game_wave_lose");
@@ -1171,7 +1185,7 @@ var WaveController = (function () {
 
 module.exports = WaveController;
 
-},{"../data/waves":14}],12:[function(require,module,exports){
+},{"../data/waves":14,"../screens/EndGame":17}],12:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -1248,7 +1262,7 @@ module.exports = {
 
     "long-sword": {
       label: "Long Sword",
-      requirements: ["short-sword", "silver"]
+      requirements: ["short-sword", "steel"]
     },
     "short-sword": {
       label: "Short Sword",
@@ -1485,7 +1499,7 @@ module.exports={
     ],
     "game_choose_item": [
       284000,
-      1481.6553287981833
+      1068.117913832225
     ],
     "game_clock_ending": [
       287000,
@@ -1519,37 +1533,57 @@ module.exports={
       308000,
       6000
     ],
-    "game_music": [
+    "game_mainchar_bad": [
       315000,
+      1250.4535147392062
+    ],
+    "game_mainchar_neutral": [
+      318000,
+      1208.3900226757578
+    ],
+    "game_music": [
+      321000,
       81841.6326530612
     ],
     "game_next": [
-      398000,
+      404000,
       1516.167800453502
     ],
+    "game_questchar_bad": [
+      407000,
+      833.083900226768
+    ],
+    "game_questchar_great": [
+      409000,
+      1393.5147392290332
+    ],
+    "game_questchar_neutral": [
+      412000,
+      1825.056689342432
+    ],
     "game_wave_lose": [
-      401000,
+      415000,
       1050.0000000000114
     ],
     "game_wave_win": [
-      404000,
+      418000,
       2560.0000000000023
     ],
     "game_win": [
-      408000,
+      422000,
       10000
     ],
     "intro_background": [
-      419000,
+      433000,
       250383.67346938775,
       true
     ],
     "intro_play": [
-      671000,
+      685000,
       936.4625850340644
     ],
     "intro_tip": [
-      673000,
+      687000,
       2063.673469387709
     ]
   }
@@ -1559,7 +1593,7 @@ module.exports={
 
 module.exports = {
   intro: [{
-    text: "The enemies have arrived to our village! You need to help us by crafting weapons before the waves come, so we can survive!",
+    text: "The enemies have arrived to our village! You need to help us crafting weapons before each day so we can survive!",
     countdown: 20,
     inventory: ["steel", "silver", "cloth"],
     responses: {
@@ -1567,7 +1601,7 @@ module.exports = {
       "short-sword": "good"
     },
     feedbacks: {
-      great: "Great! They tasted the best steel of these lands!",
+      great: "Great! They tasted the best iron of these lands!",
       good: "Good job smith, they're running!",
       bad: "What sort of weapon was that? A child's toy?"
     }
@@ -1583,11 +1617,11 @@ module.exports = {
     feedbacks: {
       great: "The king's sword! That was a legend to be told!",
       good: "Funny sword, but it was enough to win the battle!",
-      bad: "I could have used this weapon to decorate my wall..."
+      bad: "I can see this weapon beeing useful only to decorate my wall..."
     }
   }, {
     text: "We are running out of resources. Be creative!",
-    countdown: 20,
+    countdown: 15,
     inventory: ["cotton", "bronze", "fabric"],
     responses: {
       "fiber-sword": "great",
@@ -1595,12 +1629,12 @@ module.exports = {
     },
     feedbacks: {
       great: "That fiber sword was strong like a big tree!",
-      good: "With those resources you kinda did the job!",
+      good: "With so little resources you kinda did the job!",
       bad: "I didn't ask for something to help my baby sleep..."
     }
   }, {
     text: "The boys brought what they've found in the barns... and the styes!",
-    countdown: 20,
+    countdown: 10,
     inventory: ["stone", "silk", "mud"],
     responses: {
       "stone-sword": "great",
@@ -1609,11 +1643,11 @@ module.exports = {
     feedbacks: {
       great: "The enemies hit rock bottom. Hooray!",
       good: "A classic, yet very weird sword. Good enough!",
-      bad: "Are you trying to reach your inner nature?"
+      bad: "Were you trying to reach your inner self or something?"
     }
   }, {
     text: "The village masons came to help!",
-    countdown: 20,
+    countdown: 15,
     inventory: ["wood", "stone", "sand"],
     responses: {
       "wood-spear": "great",
@@ -1626,34 +1660,34 @@ module.exports = {
     }
   }, {
     text: "We are looting what we can from the village.",
-    countdown: 20,
+    countdown: 15,
     inventory: ["mud", "wood", "dust"],
     responses: {
       "double-wooden-sword": "great",
       "earthen-sword": "good"
     },
     feedbacks: {
-      great: "A sword that can be swinged with both hands cuts deeper than fear!",
+      great: "A double sword cuts deeper than fear!",
       good: "Great, smith! Interesting choice of material, though.",
-      bad: "You know how many men slipped on the dirt? It's not funny!"
+      bad: "You know how many men slipped on this dirt? It's not funny!"
     }
   }],
   medium: [{
     text: "Our stash was robbed! This is everything I found to help you...",
-    countdown: 20,
+    countdown: 15,
     inventory: ["cat", "boots", "straw"],
     responses: {
       "battle-cat": "great",
       "puss-in-boots ": "good"
     },
     feedbacks: {
-      great: "I hope you trained this cats for more battle cause the enemy couldn't take them!",
-      good: "A puss in boots is more effective than swords! Who would say?",
+      great: "I hope you trained this cats for more cause the enemy couldn't take them!",
+      good: "A puss in boots that can manage swords! Who would say?",
       bad: "Pussy cats are no good in battle! Can I keep him?"
     }
   }, {
     text: "The enemies brought an arcane! Do we have anything useful?",
-    countdown: 20,
+    countdown: 10,
     inventory: ["tissue", "candles", "brass"],
     responses: {
       "fire-sword": "great",
@@ -1661,25 +1695,25 @@ module.exports = {
     },
     feedbacks: {
       great: "Wow! Even arcanes couldn't stand a powerful fire sword!",
-      good: "With those resources you kinda did the job!",
+      good: "Little resources, but you actually did the job!",
       bad: "What? Were you expecting to summon a phoenix?"
     }
   }, {
     text: "The enemies have battle dogs! We are doomed!",
-    countdown: 20,
+    countdown: 15,
     inventory: ["ragdoll", "pepper", "lemon"],
     responses: {
       "super-hot-doll": "great",
       "hot-doll": "good"
     },
     feedbacks: {
-      great: "They will probably eat by a straw for the next month!",
+      great: "They will probably eat through a straw for the next month!",
       good: "I have never seen running hot dogs ba-ha-ha!",
       bad: "Can't say it isn't tasty but...really?!"
     }
   }, {
     text: "Bats! Bats everywhere!",
-    countdown: 20,
+    countdown: 10,
     inventory: ["banana", "log", "apple"],
     responses: {
       torch: "great",
@@ -1692,7 +1726,7 @@ module.exports = {
     }
   }, {
     text: "Damn, they have clerigs! The enemies are healing their wounded!",
-    countdown: 20,
+    countdown: 15,
     inventory: ["pillow", "beer-jug", "pumpkin"],
     responses: {
       "beer-hammer": "great",
@@ -1706,7 +1740,7 @@ module.exports = {
   }],
   hard: [{
     text: "The enemies grew tired of making sense! They brought bunnies!",
-    countdown: 20,
+    countdown: 10,
     inventory: ["carrots", "vodka", "chocolate", "powder"],
     responses: {
       "explosive-vodka-carrots": "great",
@@ -1719,33 +1753,33 @@ module.exports = {
     }
   }, {
     text: "The enemies brought pretty witches to enchant our soldiers! We need to do something!",
-    countdown: 20,
+    countdown: 10,
     inventory: ["potion", "perfume", "cigarrete", "salt"],
     responses: {
       "ogre-potion": "great",
       "smelly-potion": "good"
     },
     feedbacks: {
-      great: "I bet those ogres will find nothing to enchant from now on!",
+      great: "I bet those ogres will enchant nothing from now on!",
       good: "Jesus, what a smell! What did you put there?",
       bad: "Of course, let's turn those beautiful witches into Miss Tavern MCDLXXI..."
     }
   }, {
-    text: "A dragon! They have a dragon!!!!!!!",
-    countdown: 20,
+    text: "A dragon?! They have a dragon!!!",
+    countdown: 10,
     inventory: ["gnome", "spoon", "spear", "gear"],
     responses: {
       "super-battle-gnome": "great",
       "battle-gnome": "good"
     },
     feedbacks: {
-      great: "A dragon with gnomophobia and a hyped up gnome! You're a genius, smith!",
+      great: "A dragon with gnomophobia versus a hyped up gnome! You're a genius, smith!",
       good: "This gnome is really brave, or that dragon is really a coward!",
       bad: "I know we lost, but the gnome is funny."
     }
   }, {
-    text: "Their necromancer is reviving their fallen soldiers and turning them into zombies!",
-    countdown: 20,
+    text: "Their necromancer is turning fallen soldiers into zombies!",
+    countdown: 10,
     inventory: ["boombox", "bass", "crystal-gloves", "rune"],
     responses: {
       thriller: "great",
@@ -1754,11 +1788,11 @@ module.exports = {
     feedbacks: {
       great: "Cause this is thriller, thriller night, and no one's gonna save you from our smith that works so hard!",
       good: "Zombies gone dancing! The necromancer lost!",
-      bad: "Yeah, gloves that walk alone, how nice."
+      bad: "Yeah, gloves that walk, how nice."
     }
   }, {
     text: "What? The enemies have a Propeller Knight! How do we fight that?",
-    countdown: 20,
+    countdown: 10,
     inventory: ["stick", "tavern-sign", "magic", "courage"],
     responses: {
       "shovel-knight": "great",
@@ -1829,7 +1863,7 @@ window.controller = new GameController();
 controller.setStage(new Loader());
 controller.start();
 
-},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Loader":18,"./vendor/array.shuffle":19,"./vendor/generatorRuntime":20,"./vendor/pixi.draggable":21,"./vendor/pixi.particles":22,"gsap":23,"howler":24,"pixi.js":25,"wolfy87-eventemitter":26}],16:[function(require,module,exports){
+},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Loader":19,"./vendor/array.shuffle":20,"./vendor/generatorRuntime":21,"./vendor/pixi.draggable":22,"./vendor/pixi.particles":23,"gsap":24,"howler":25,"pixi.js":26,"wolfy87-eventemitter":27}],16:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1923,6 +1957,42 @@ var Craft = (function (_PIXI$Stage) {
 module.exports = Craft;
 
 },{"../components/DeliveryArea":2,"../components/Hud":4,"../components/Inventory":5,"../components/TalkBox":8,"../components/WorkingArea":9,"../controllers/WaveController":11}],17:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var EndGame = (function (_PIXI$Stage) {
+  function EndGame(responses) {
+    _classCallCheck(this, EndGame);
+
+    _get(Object.getPrototypeOf(EndGame.prototype), "constructor", this).call(this);
+
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("endgame.png"));
+    this.addChild(this.bg);
+
+    this.responses = responses;
+  }
+
+  _inherits(EndGame, _PIXI$Stage);
+
+  _createClass(EndGame, {
+    update: {
+      value: function update() {}
+    }
+  });
+
+  return EndGame;
+})(PIXI.Stage);
+
+module.exports = EndGame;
+
+},{}],18:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -2062,7 +2132,7 @@ var Intro = (function (_PIXI$Stage) {
 
 module.exports = Intro;
 
-},{"./Craft":16}],18:[function(require,module,exports){
+},{"./Craft":16}],19:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -2129,7 +2199,7 @@ var Loader = (function (_PIXI$Stage) {
 
 module.exports = Loader;
 
-},{"./Intro":17}],19:[function(require,module,exports){
+},{"./Intro":18}],20:[function(require,module,exports){
 "use strict";
 
 window.shuffle = function (array) {
@@ -2153,7 +2223,7 @@ window.shuffle = function (array) {
   return array;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (global){
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -2693,7 +2763,7 @@ window.shuffle = function (array) {
 typeof global === "object" ? global : typeof window === "object" ? window : typeof self === "object" ? self : undefined);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
 * The MIT License (MIT)
 *
@@ -3752,7 +3822,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
     };
 })();
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*! PixiParticles 1.4.1 */
 /**
 *  @module cloudkid
@@ -5426,7 +5496,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
 //that the movieclip will animate even if the emitter (and the particles)
 //are paused
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.16.1
@@ -12650,7 +12720,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*!
  *  howler.js v1.1.25
  *  howlerjs.com
@@ -14005,7 +14075,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 })();
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * @license
  * pixi.js - v2.2.9
@@ -34384,7 +34454,7 @@ Object.defineProperty(PIXI.RGBSplitFilter.prototype, 'blue', {
         root.PIXI = PIXI;
     }
 }).call(this);
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.11 - git.io/ee
  * Unlicense - http://unlicense.org/
