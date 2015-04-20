@@ -1,3 +1,5 @@
+import EndGame from '../screens/EndGame'
+
 var waves = require('../data/waves');
 
 export default class WaveController {
@@ -21,6 +23,7 @@ export default class WaveController {
 
     this.timeInterval = null;
     this.currentTime = 10;
+    this.responses = [];
 
     events.on('element-drop', this.tryStartCountdown.bind(this));
   }
@@ -73,8 +76,16 @@ export default class WaveController {
     this.workingArea.clear();
 
     if (this.sectionIndex + 1 >= Math.clamp(waves[this.section].length, 0, 3)) {
+      let nextSection = this.sectionIterator.next()
+
+      // wave is done! show end game screen
+      if (nextSection.done) {
+        controller.setStage(new EndGame(this.responses))
+        return;
+      }
+
+      this.section = nextSection.value;
       this.sectionIndex = 0;
-      this.section = this.sectionIterator.next().value
     } else {
       this.sectionIndex++;
     }
@@ -92,6 +103,7 @@ export default class WaveController {
 
   onDeliver(element) {
     let performance = this.getElementPerformance(element.identifier);
+    this.responses.push(performance);
 
     if(performance == "bad"){
       sounds.play('game_wave_lose');
@@ -102,7 +114,6 @@ export default class WaveController {
     events.emit('talk', 'customer', performance, this.waveData.feedbacks[ performance ]);
 
     this.hud.addProgress(performance);
-
     this.nextWave()
   }
 
@@ -121,6 +132,7 @@ export default class WaveController {
       events.emit('talk', 'customer', 'bad', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       this.hud.addProgress("bad");
+      this.responses.push("bad");
       sounds.play('game_wave_lose');
 
       this.nextWave()
