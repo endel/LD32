@@ -99,7 +99,7 @@ var DeliveryArea = (function (_PIXI$DisplayObjectContainer) {
 
     this.button = new DeliverButton();
     this.button.x = 4;
-    this.button.y = this.area.height + 16;
+    this.button.y = this.area.height + 20;
     this.addChild(this.button);
     this.button.click = this.button.tap = this.doDeliver.bind(this);
 
@@ -363,8 +363,13 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
 
           // TODO: this is not working!
           var emitter = new ParticleEmitter();
-          emitter.x = this.x + this.width / 2;
-          emitter.y = this.y + this.height / 2;
+          if (this.icon) {
+            emitter.x = this.x + this.icon.x + this.icon.width / 2;
+            emitter.y = this.y + this.icon.y + this.icon.height / 2;
+          } else {
+            emitter.x = this.x + this.width / 2;
+            emitter.y = this.y + this.height / 2;
+          }
           this.parent.addChild(emitter);
           emitter.update();
 
@@ -523,9 +528,9 @@ var Inventory = (function (_PIXI$Sprite) {
         }
 
         // add new elements
-        elements = shuffle(elements);
-        for (var i = 0; i < elements.length; i++) {
-          this.addElement(new Element(elements[i]));
+        var randomElements = shuffle(elements);
+        for (var i = 0; i < randomElements.length; i++) {
+          this.addElement(new Element(randomElements[i]));
         }
       }
     },
@@ -1186,7 +1191,7 @@ module.exports = {
       requirements: ["cotton", "bronze"]
     },
 
-    "soft-sword ": {
+    "soft-sword": {
       label: "Soft Sword",
       requirements: ["cotton", "fabric"]
     },
@@ -1783,16 +1788,16 @@ var Craft = (function (_PIXI$Stage) {
     this.bg.y = this.hud.height;
     this.addChild(this.bg);
 
-    this.inventory.x = boxMargin;
-    this.inventory.y = this.hud.height;
+    this.inventory.x = 10;
+    this.inventory.y = this.hud.height + 4;
     this.addChild(this.inventory);
 
     this.workingArea.x = this.inventory.x + this.inventory.width + boxMargin;
-    this.workingArea.y = this.inventory.y + boxMargin;
+    this.workingArea.y = this.inventory.y + 4;
     this.addChild(this.workingArea);
 
     this.deliveryArea.x = this.workingArea.x + this.workingArea.width + boxMargin;
-    this.deliveryArea.y = this.inventory.y + boxMargin;
+    this.deliveryArea.y = this.workingArea.y;
     this.addChild(this.deliveryArea);
 
     this.talkBox.x = 0;
