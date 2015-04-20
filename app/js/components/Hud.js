@@ -60,6 +60,14 @@ export default class Hud extends PIXI.DisplayObjectContainer {
     this.bad.alpha = 0;
     this.addChild(this.bad);
 
+    this.timeup = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameWarningTime.png"));
+    this.timeup.anchor.x = 0.5;
+    this.timeup.anchor.y = 0.5;
+    this.timeup.x = SCREEN_WIDTH/2;
+    this.timeup.y = SCREEN_HEIGHT/2 - 20;
+    this.timeup.alpha = 0;
+    this.addChild(this.timeup);
+
     events.on('delivered-performance', this.showPerformanceFeedback.bind(this));
   }
 
@@ -80,6 +88,11 @@ export default class Hud extends PIXI.DisplayObjectContainer {
         this.bad.y = SCREEN_HEIGHT/2 - 20;
         TweenMax.to(this.bad, 0.8, { y:SCREEN_HEIGHT/2-70,alpha:1 })
         TweenMax.to(this.bad, 1.0, { delay:1.4,y:SCREEN_HEIGHT/2-100,alpha:0})
+    }else if(performance == "time")
+    {
+        this.timeup.y = SCREEN_HEIGHT/2 - 20;
+        TweenMax.to(this.timeup, 0.8, { y:SCREEN_HEIGHT/2-70,alpha:1 })
+        TweenMax.to(this.timeup, 1.0, { delay:1.4,y:SCREEN_HEIGHT/2-100,alpha:0})
     }
     
   }

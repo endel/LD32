@@ -137,6 +137,7 @@ export default class WaveController {
         "Are you nuts, smith? We can't fight empty handed! We lost that one!"
       ];
       events.emit('talk', 'customer', 'bad', messages[ Math.floor((Math.random() * messages.length)) ]);
+      events.emit('delivered-performance', "time");
 
       this.hud.addProgress("bad");
       this.responses.push("bad");
