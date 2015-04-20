@@ -1,3 +1,5 @@
+import ParticleEmitter from './ParticleEmitter';
+
 export default class Hud extends PIXI.DisplayObjectContainer {
 
   constructor(identifier, isBase = true) {
@@ -26,8 +28,8 @@ export default class Hud extends PIXI.DisplayObjectContainer {
 
     this.waveLabel.y = this.timeLabel.y = 14
 
-    this.startProgressX = 48;
-    this.startProgressY = 24;
+    this.startProgressX = 54;
+    this.startProgressY = 30;
     this.marginX = 48;
 
     this.progressCount = 0;
@@ -36,14 +38,31 @@ export default class Hud extends PIXI.DisplayObjectContainer {
 
   addProgress(kind) {
     var points = { 'bad': 0, 'good': 1, 'great': 2 }
-    var progressIcon = new PIXI.Sprite.fromFrame('progress-' + kind + '.png');
+    var colors = { 'bad': '#C20A0A', 'good': '#FFC600', 'great': '#18A52A' }
 
+    var frameName = 'progress-' + kind + '.png';
+    var progressIcon = new PIXI.Sprite.fromFrame(frameName);
+    progressIcon.anchor.x = 0.5;
+    progressIcon.anchor.y = 0.5;
+    progressIcon.alpha = 0;
+    progressIcon.rotation = 0;
     progressIcon.x = this.startProgressX + (this.marginX * this.progressCount);
     progressIcon.y = this.startProgressY;
     this.addChild(progressIcon);
 
+    progressIcon.scale.x = 10;
+    progressIcon.scale.y = 10;
+
+    TweenMax.to(progressIcon.scale, 0.5, { x: 1, y: 1, ease: Power2.easeOut })
+    TweenMax.to(progressIcon, 0.5, { rotation: Math.PI * 45, ease: Power2.easeOut,  alpha: 1 })
+
     this.progressPoints += points[kind];
     this.progressCount++;
+
+    var emitter = new ParticleEmitter(frameName, { start: colors[kind], end: colors[kind] });
+    emitter.x = this.x + progressIcon.x;
+    emitter.y = this.y + progressIcon.y;
+    this.parent.addChild(emitter)
   }
 
 }

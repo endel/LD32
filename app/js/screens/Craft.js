@@ -39,16 +39,16 @@ export default class Craft extends PIXI.Stage {
     this.bg.y = this.hud.height;
     this.addChild(this.bg);
 
-    this.inventory.x = boxMargin;
-    this.inventory.y = this.hud.height;
+    this.inventory.x = 10;
+    this.inventory.y = this.hud.height + 4;
     this.addChild(this.inventory)
 
     this.workingArea.x = this.inventory.x + this.inventory.width + boxMargin
-    this.workingArea.y = this.inventory.y + boxMargin;
+    this.workingArea.y = this.inventory.y + 4;
     this.addChild(this.workingArea);
 
     this.deliveryArea.x = this.workingArea.x + this.workingArea.width + boxMargin;
-    this.deliveryArea.y = this.inventory.y + boxMargin;
+    this.deliveryArea.y = this.workingArea.y;
     this.addChild(this.deliveryArea);
 
     this.talkBox.x = 0

@@ -20,12 +20,13 @@ export default class WorkingArea extends PIXI.Sprite {
     this.instructionLabel.anchor.x = 0.5;
     this.instructionLabel.anchor.y = 0.5;
     this.instructionLabel.x = this.width / 2;
-    this.instructionLabel.y = this.height / 2;
+    this.instructionLabel.y = this.height / 2 - 8;
     this.addChild(this.instructionLabel);
 
     this.droppable({
       accepts: "draggable",
-      drop: this.onDrop.bind(this)
+      drop: this.onDrop.bind(this),
+      tolerance: "touch"
     });
   }
 

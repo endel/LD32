@@ -10,6 +10,7 @@
     "pixi.js": "~2.2.9",
     "wolfy87-eventemitter": "~4.2.11",
     "howler" : "~1.1.25",
+    "gsap": "^1.16.1",
     "gulp-gh-pages": "~0.5.1"
   },
   "devDependencies": {

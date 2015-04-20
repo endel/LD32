@@ -31,7 +31,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
     this.droppable({
       accepts: ["inventory", "working"],
       drop: this.onDrop.bind(this),
-      greedy: true // prevent event propagation
+      greedy: true, // prevent event propagation
+      tolerance: "touch"
     });
 
     events.on('wave-prepare', this.disableInteractivity.bind(this))
@@ -148,7 +149,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
       lastInteractionPoint = evt.global.clone();
 
       // TODO: this is not working!
-      var emitter = new ParticleEmitter();
+      var emitter = new ParticleEmitter('dust-particle.png');
       if (this.icon) {
         emitter.x = this.x + this.icon.x + this.icon.width / 2;
         emitter.y = this.y + this.icon.y + this.icon.height / 2;
@@ -157,7 +158,6 @@ export default class Element extends PIXI.DisplayObjectContainer {
         emitter.y = this.y + this.height / 2;
       }
       this.parent.addChild(emitter)
-      emitter.update();
 
       this.remove();
     }

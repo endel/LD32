@@ -9,7 +9,8 @@ export default class DeliveryArea extends PIXI.DisplayObjectContainer {
     this.addChild(this.area);
     this.area.droppable({
       accepts: "draggable",
-      drop: this.onDrop.bind(this)
+      drop: this.onDrop.bind(this),
+      tolerance: "touch"
     });
 
     this.element = null;
@@ -17,7 +18,7 @@ export default class DeliveryArea extends PIXI.DisplayObjectContainer {
 
     this.button = new DeliverButton();
     this.button.x = 4;
-    this.button.y = this.area.height + 16;
+    this.button.y = this.area.height + 20;
     this.addChild(this.button);
     this.button.click = this.button.tap = this.doDeliver.bind(this);
 

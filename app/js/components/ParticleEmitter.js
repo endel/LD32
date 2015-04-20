@@ -1,6 +1,6 @@
 export default class ParticleEmitter extends PIXI.DisplayObjectContainer {
 
-  constructor() {
+  constructor(frameName, colors = null) {
     super();
 
     this.ttl = 10;
@@ -9,7 +9,7 @@ export default class ParticleEmitter extends PIXI.DisplayObjectContainer {
 
     this.elapsed = Date.now();
 
-    this.emitter = new cloudkid.Emitter( this, [ PIXI.Texture.fromFrame('dust-particle.png') ], {
+    var options = {
       "alpha": {
         "start": 0.8,
         "end": 0.0
@@ -52,7 +52,11 @@ export default class ParticleEmitter extends PIXI.DisplayObjectContainer {
         "y": 0,
         "r": 10
       }
-    });
+    };
+
+    options.color = colors;
+
+    this.emitter = new cloudkid.Emitter( this, [ PIXI.Texture.fromFrame(frameName) ], options);
     this.emitter.emit = true;
 
     controller.particleManager.push(this);
