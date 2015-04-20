@@ -105,7 +105,7 @@ export default {
       "requirements": ["cotton", "bronze"]
     },
 
-    "soft-sword " : {
+    "soft-sword" : {
       "label": "Soft Sword",
       "requirements": ["cotton", "fabric"]
     },
