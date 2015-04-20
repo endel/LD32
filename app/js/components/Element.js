@@ -124,8 +124,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
       // TODO: this is not working!
       var emitter = new ParticleEmitter();
-      emitter.x = this.x;
-      emitter.y = this.y;
+      emitter.x = this.x + this.width / 2;
+      emitter.y = this.y + this.height / 2;
       this.parent.addChild(emitter)
       emitter.update();
 

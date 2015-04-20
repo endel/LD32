@@ -1,8 +1,11 @@
+import ParticleManager from '../components/ParticleManager';
+
 export default class GameController {
 
   constructor() {
     super();
     this.currentStage = null;
+    this.particleManager = new ParticleManager();
     this.stages = []
   }
 
@@ -16,6 +19,8 @@ export default class GameController {
   }
 
   update() {
+    this.particleManager.update();
+
     if (this.currentStage) {
       this.currentStage.update();
     }

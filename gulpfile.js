@@ -99,7 +99,7 @@ gulp.task('html', ['stylesheet'], function () {
 
   return gulp.src('app/*.html')
     .pipe(assets)
-    .pipe($.if('*.js', $.uglify()))
+    // .pipe($.if('*.js', $.uglify()))
     .pipe($.if('*.css', $.csso()))
     .pipe(assets.restore())
     .pipe($.useref())
@@ -235,7 +235,7 @@ gulp.task('wiredep', function () {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['jshint', 'html', 'javascript', 'stylesheet', 'images', 'audio', 'fonts', 'extras'], function () {
+gulp.task('build', ['html', 'javascript', 'stylesheet', 'images', 'audio', 'fonts', 'extras'], function () {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
