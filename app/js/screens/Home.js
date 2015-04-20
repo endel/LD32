@@ -8,5 +8,9 @@ export default class Home extends PIXI.Stage {
   update() {
   }
 
+  dispose() {
+    this.removeChildren();
+  }
+
 }
 

@@ -97,4 +97,8 @@ export default class EndGame extends PIXI.Stage {
   update() {
   }
 
+  dispose() {
+    this.removeChildren();
+  }
+
 }

@@ -39,4 +39,8 @@ export default class Loader extends PIXI.Stage {
     }
   }
 
+  dispose() {
+    this.removeChildren();
+  }
+
 }

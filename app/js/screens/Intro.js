@@ -32,7 +32,7 @@ export default class Intro extends PIXI.Stage {
     store.anchor.x = 0.5;
     store.x = SCREEN_WIDTH/2;
     store.y = 0;
-    this.addChild(store); 
+    this.addChild(store);
 
     // create an array to store the textures
     var faceIdle = [];
@@ -76,7 +76,7 @@ export default class Intro extends PIXI.Stage {
     balcony.anchor.x = 0.5;
     balcony.x = SCREEN_WIDTH/2;
     balcony.y = 304;
-    this.addChild(balcony); 
+    this.addChild(balcony);
 
     function changeFace()
     {
@@ -84,111 +84,110 @@ export default class Intro extends PIXI.Stage {
         blacksmithIdle.visible = !blacksmithIdle.visible;
         welcome.visible = blacksmithIdle.visible;
     }
-    
-    var credits = new PIXI.Sprite(PIXI.Texture.fromFrame("homecredits.png"));
-    credits.anchor.x = 0.5;
-    credits.x = SCREEN_WIDTH/2;
-    credits.y = SCREEN_HEIGHT - 60;
-    this.addChild(credits);
 
-    var epa = new PIXI.Graphics();
-    epa.alpha = 0
-    epa.beginFill(0xFFFF00);
-    epa.lineStyle(5, 0xFF0000);
-    epa.drawRect(0, 0, 200, 50);
-    epa.x = 60;
-    epa.y = SCREEN_HEIGHT - 60;
-    epa.interactive = true;
-    epa.buttonMode = true;
-    epa.click = epa.tap = this.openPortfolio.bind("epa");
-    this.addChild(epa);
+    this.credits = new PIXI.Sprite(PIXI.Texture.fromFrame("homecredits.png"));
+    this.credits.anchor.x = 0.5;
+    this.credits.x = SCREEN_WIDTH/2;
+    this.credits.y = SCREEN_HEIGHT - 60;
+    this.addChild(this.credits);
+
+    this.epa = new PIXI.Graphics();
+    this.epa.alpha = 0
+    this.epa.beginFill(0xFFFF00);
+    this.epa.lineStyle(5, 0xFF0000);
+    this.epa.drawRect(0, 0, 200, 50);
+    this.epa.x = 60;
+    this.epa.y = SCREEN_HEIGHT - 60;
+    this.epa.interactive = true;
+    this.epa.buttonMode = true;
+    this.epa.click = this.epa.tap = this.openPortfolio.bind("epa");
+    this.addChild(this.epa);
 
     var epaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
     epaabout.interactive = true;
     epaabout.anchor.x = 0;
     epaabout.anchor.y = 1
-    epaabout.x = epa.x;
+    epaabout.x = this.epa.x;
     epaabout.y = SCREEN_HEIGHT - 70;
     epaabout.alpha = 0;
     this.addChild(epaabout);
 
-    epa.mouseover = this.showAbout.bind(epaabout);
-    epa.mouseout = this.hideAbout.bind(epaabout);
+    this.epa.mouseover = this.showAbout.bind(epaabout);
+    this.epa.mouseout = this.hideAbout.bind(epaabout);
 
 
-    var endel = new PIXI.Graphics();
-    endel.alpha = 0
-    endel.beginFill(0xFFFF00);
-    endel.lineStyle(5, 0xFF0000);
-    endel.drawRect(0, 0, 200, 50);
-    endel.x = 320;
-    endel.y = SCREEN_HEIGHT - 60;
-    endel.interactive = true;
-    endel.buttonMode = true;
-    endel.click = endel.tap = this.openPortfolio.bind("endel");
-    this.addChild(endel);
+    this.endel = new PIXI.Graphics();
+    this.endel.alpha = 0
+    this.endel.beginFill(0xFFFF00);
+    this.endel.lineStyle(5, 0xFF0000);
+    this.endel.drawRect(0, 0, 200, 50);
+    this.endel.x = 320;
+    this.endel.y = SCREEN_HEIGHT - 60;
+    this.endel.interactive = true;
+    this.endel.buttonMode = true;
+    this.endel.click = this.endel.tap = this.openPortfolio.bind("endel");
+    this.addChild(this.endel);
 
-    var endelabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutProg.png"));
-    endelabout.interactive = true;
-    endelabout.anchor.x = 0;
-    endelabout.anchor.y = 1
-    endelabout.x = endel.x;
-    endelabout.y = SCREEN_HEIGHT - 70;
-    endelabout.alpha = 0;
-    this.addChild(endelabout);
+    this.endelabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutProg.png"));
+    this.endelabout.interactive = true;
+    this.endelabout.anchor.x = 0;
+    this.endelabout.anchor.y = 1
+    this.endelabout.x = this.endel.x;
+    this.endelabout.y = SCREEN_HEIGHT - 70;
+    this.endelabout.alpha = 0;
+    this.addChild(this.endelabout);
 
-    endel.mouseover = this.showAbout.bind(endelabout);
-    endel.mouseout = this.hideAbout.bind(endelabout);
+    this.endel.mouseover = this.showAbout.bind(this.endelabout);
+    this.endel.mouseout = this.hideAbout.bind(this.endelabout);
 
-    var testa = new PIXI.Graphics();
-    testa.alpha = 0
-    testa.beginFill(0xFFFF00);
-    testa.lineStyle(5, 0xFF0000);
-    testa.drawRect(0, 0, 250, 50);
-    testa.x = 550;
-    testa.y = SCREEN_HEIGHT - 60;
-    testa.interactive = true;
-    testa.buttonMode = true;
-    testa.click = testa.tap = this.openPortfolio.bind("testa");
-    this.addChild(testa);
+    this.testa = new PIXI.Graphics();
+    this.testa.alpha = 0
+    this.testa.beginFill(0xFFFF00);
+    this.testa.lineStyle(5, 0xFF0000);
+    this.testa.drawRect(0, 0, 250, 50);
+    this.testa.x = 550;
+    this.testa.y = SCREEN_HEIGHT - 60;
+    this.testa.interactive = true;
+    this.testa.buttonMode = true;
+    this.testa.click = this.testa.tap = this.openPortfolio.bind("testa");
+    this.addChild(this.testa);
 
-    var testaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
-    testaabout.interactive = true;
-    testaabout.anchor.x = 0;
-    testaabout.anchor.y = 1
-    testaabout.x = testa.x + 40;
-    testaabout.y = SCREEN_HEIGHT - 70;
-    testaabout.alpha = 0;
-    this.addChild(testaabout);
+    this.testaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
+    this.testaabout.interactive = true;
+    this.testaabout.anchor.x = 0;
+    this.testaabout.anchor.y = 1
+    this.testaabout.x = this.testa.x + 40;
+    this.testaabout.y = SCREEN_HEIGHT - 70;
+    this.testaabout.alpha = 0;
+    this.addChild(this.testaabout);
 
-    testa.mouseover = this.showAbout.bind(testaabout);
-    testa.mouseout = this.hideAbout.bind(testaabout);
+    this.testa.mouseover = this.showAbout.bind(this.testaabout);
+    this.testa.mouseout = this.hideAbout.bind(this.testaabout);
 
-    var tomo = new PIXI.Graphics();
-    tomo.alpha = 0
-    tomo.beginFill(0xFFFF00);
-    tomo.lineStyle(5, 0xFF0000);
-    tomo.drawRect(0, 0, 200, 50);
-    tomo.x = 860;
-    tomo.y = SCREEN_HEIGHT - 60;
-    tomo.interactive = true;
-    tomo.buttonMode = true;
-    tomo.click = tomo.tap = this.openPortfolio.bind("tomo");
-    this.addChild(tomo);
+    this.tomo = new PIXI.Graphics();
+    this.tomo.alpha = 0
+    this.tomo.beginFill(0xFFFF00);
+    this.tomo.lineStyle(5, 0xFF0000);
+    this.tomo.drawRect(0, 0, 200, 50);
+    this.tomo.x = 860;
+    this.tomo.y = SCREEN_HEIGHT - 60;
+    this.tomo.interactive = true;
+    this.tomo.buttonMode = true;
+    this.tomo.click = this.tomo.tap = this.openPortfolio.bind("tomo");
+    this.addChild(this.tomo);
 
 
-    var tomoabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutArt.png"));
-    tomoabout.interactive = true;
-    tomoabout.anchor.x = 0;
-    tomoabout.anchor.y = 1
-    tomoabout.x = tomo.x;
-    tomoabout.y = SCREEN_HEIGHT - 70;
-    tomoabout.alpha = 0;
-    this.addChild(tomoabout);
+    this.tomoabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutArt.png"));
+    this.tomoabout.interactive = true;
+    this.tomoabout.anchor.x = 0;
+    this.tomoabout.anchor.y = 1
+    this.tomoabout.x = this.tomo.x;
+    this.tomoabout.y = SCREEN_HEIGHT - 70;
+    this.tomoabout.alpha = 0;
+    this.addChild(this.tomoabout);
 
-    tomo.mouseover = this.showAbout.bind(tomoabout);
-    tomo.mouseout = this.hideAbout.bind(tomoabout);
-
+    this.tomo.mouseover = this.showAbout.bind(this.tomoabout);
+    this.tomo.mouseout = this.hideAbout.bind(this.tomoabout);
 
     var welcome = new PIXI.Sprite(PIXI.Texture.fromFrame("homeballon1.png"));
     welcome.anchor.x = 0;
@@ -199,30 +198,29 @@ export default class Intro extends PIXI.Stage {
     welcome.alpha = 0;
     this.addChild(welcome);
 
-
-
     // move guys
     TweenMax.from(store, 2.0, { x: SCREEN_WIDTH + store.width, ease: Power1.easeOut })
     TweenMax.from(balcony, 2.0, { x: SCREEN_WIDTH + store.width/2, ease: Power1.easeOut })
     TweenMax.to(ground1, 2.0, { x: -SCREEN_WIDTH, ease: Power1.easeOut })
     TweenMax.to(ground2, 2.0, { x: 0, ease: Power1.easeOut })
-    TweenMax.from(credits, 2.0, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut })
+    TweenMax.from(this.credits, 2.0, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut })
     TweenMax.from(blacksmithTalk, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.from(blacksmithIdle, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.to(welcome, 0.2, { alpha:1, delay:2.2, ease: Power1.easeOut })
     TweenMax.to(cloud1, 40.0, { x: -300, repeat: 10 })
     TweenMax.to(cloud2, 50.0, { x: -300, delay:3, repeat: 10 })
 
-    var startLabel = new PIXI.Graphics();
-    startLabel.alpha = 0
-    startLabel.beginFill(0xFFFF00);
-    startLabel.lineStyle(5, 0xFF0000);
-    startLabel.drawRect(0, 0, 300, 50);
-    startLabel.x = SCREEN_WIDTH / 2 - startLabel.width/2;
-    startLabel.y = (SCREEN_HEIGHT / 2) + 115;
-    startLabel.interactive = true;
-    startLabel.click = startLabel.tap = this.startGame.bind(this);
-    this.addChild(startLabel);
+    this.startLabel = new PIXI.Graphics();
+    this.startLabel.alpha = 0
+    this.startLabel.beginFill(0xFFFF00);
+    this.startLabel.lineStyle(5, 0xFF0000);
+    this.startLabel.drawRect(0, 0, 300, 50);
+    this.startLabel.x = SCREEN_WIDTH / 2 - this.startLabel.width/2;
+    this.startLabel.y = (SCREEN_HEIGHT / 2) + 115;
+    this.startLabel.interactive = true;
+    this.startLabel.click = this.startLabel.tap = this.startGame.bind(this);
+    this.startLabel.buttonMode = true;
+    this.addChild(this.startLabel);
   }
 
   startGame() {
@@ -233,20 +231,17 @@ export default class Intro extends PIXI.Stage {
 
   showAbout()
   {
-    
     TweenMax.to(this, 0.2, { alpha:1, ease: Power1.easeOut })
   }
 
   hideAbout()
   {
-    
     TweenMax.to(this, 0.2, { alpha:0, ease: Power1.easeOut })
   }
 
   openPortfolio()
   {
     var id = this;
-
     switch(id)
     {
       case "epa":
@@ -265,6 +260,30 @@ export default class Intro extends PIXI.Stage {
   }
 
   update() {
+  }
+
+  dispose() {
+    this.epa.click = this.epa.tap = null;
+    this.epa.mouseover = null
+    this.epa.mouseout = null
+
+    this.endel.click = this.endel.tap = null;
+    this.endel.mouseover = null
+    this.endel.mouseout = null
+
+    this.testa.click = this.testa.tap = null;
+    this.testa.mouseover = null
+    this.testa.mouseout = null
+
+    this.tomo.click = this.tomo.tap = null;
+    this.tomo.mouseover = null
+    this.tomo.mouseout = null
+
+    this.startLabel.click = this.startLabel.tap = null;
+    this.startLabel.mouseover = null
+    this.startLabel.mouseout = null
+
+    this.removeChildren();
   }
 
 }
