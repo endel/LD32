@@ -34,7 +34,8 @@ export default class WaveController {
 
   start() {
     events.emit('wave-start');
-    events.emit('talk', "pictureCustomer_0001.png", this.waveData.text);
+
+    events.emit('talk', 'customer', 'normal', this.waveData.text);
 
     this.currentTime = this.waveData.countdown + 1;
     this.timeTick();
@@ -100,7 +101,7 @@ export default class WaveController {
       sounds.play('game_wave_win');
     }
 
-    events.emit('talk', "pictureCustomer_0001.png", this.waveData.feedbacks[ performance ]);
+    events.emit('talk', 'customer', performance, this.waveData.feedbacks[ performance ]);
 
     this.hud.addProgress(performance);
 
@@ -119,7 +120,7 @@ export default class WaveController {
         "We ran out of time! We lost this round!",
         "Are you nuts, smith? We can't fight empty handed! We lost that one!"
       ];
-      events.emit('talk', "pictureCustomer_0001.png", messages[ Math.floor((Math.random() * messages.length)) ]);
+      events.emit('talk', 'customer', 'bad', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       this.hud.addProgress("bad");
       sounds.play('game_wave_lose');
