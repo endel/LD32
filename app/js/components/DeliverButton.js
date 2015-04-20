@@ -16,6 +16,10 @@ export default class DeliveryArea extends PIXI.Sprite {
     this._enabled = false;
   }
 
+  get enabled() {
+    return this._enabled;
+  }
+
   set enabled(enabled) {
     this._enabled = enabled;
 

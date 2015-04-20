@@ -30,15 +30,10 @@ export default class Hud extends PIXI.DisplayObjectContainer {
 
     this.progressCount = 0;
     this.progressPoints = 0;
-
-    // TODO: remove me
-    this.addProgress('bad')
-    this.addProgress('good')
-    this.addProgress('perfect')
   }
 
   addProgress(kind) {
-    var points = { 'bad': 0, 'good': 1, 'perfect': 2 }
+    var points = { 'bad': 0, 'good': 1, 'great': 2 }
     var progressIcon = new PIXI.Sprite.fromFrame('progress-' + kind + '.png');
 
     progressIcon.x = this.startProgressX + (this.marginX * this.progressCount);
