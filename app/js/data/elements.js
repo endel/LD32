@@ -8,7 +8,7 @@ export default {
     "iron": { "label": "Iron" },
     "copper": { "label": "Copper" },
     "leather": { "label": "Leather" },
-    
+
     "cotton": { "label": "Cotton" },
     "bronze": { "label": "Bronze" },
     "fabric": { "label": "Fabric" },
@@ -83,7 +83,7 @@ export default {
       "requirements": ["cloth", "cloth"]
     },
 
-    "king's-sword" : {
+    "kings-sword" : {
       "label": "King's Sword",
       "requirements": ["leathered-sword", "iron"]
     },

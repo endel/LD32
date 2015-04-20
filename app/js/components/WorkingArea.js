@@ -12,8 +12,16 @@ export default class WorkingArea extends PIXI.Sprite {
     this.elements = []
     this.maxElements = 2;
 
-    this.width = SCREEN_WIDTH / 2;
-    this.height = SCREEN_HEIGHT / 2;
+    this.instructionLabel = new PIXI.Text("Create your weapons here", {
+      font: DEFAULT_FONT,
+      fill: "#fff",
+      align: "center",
+    })
+    this.instructionLabel.anchor.x = 0.5;
+    this.instructionLabel.anchor.y = 0.5;
+    this.instructionLabel.x = this.width / 2;
+    this.instructionLabel.y = this.height / 2;
+    this.addChild(this.instructionLabel);
 
     this.droppable({
       accepts: "draggable",
@@ -35,6 +43,11 @@ export default class WorkingArea extends PIXI.Sprite {
   }
 
   onDrop(originalElement, mouse) {
+    // remove instruction label if it still on stage
+    if (this.instructionLabel.parent) {
+      this.instructionLabel.parent.removeChild(this.instructionLabel);
+    }
+
     var element = originalElement;
     var dragOptions = element.dragOptions;
 

@@ -21,7 +21,7 @@ export default {
       "countdown": 20,
       "inventory": ["iron", "copper", "leather"],
       "responses": {
-        "king's-sword": "great",
+        "kings-sword": "great",
         "leathered-sword ": "good"
       },
       "feedbacks": {

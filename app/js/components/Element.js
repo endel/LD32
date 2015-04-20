@@ -60,21 +60,26 @@ export default class Element extends PIXI.DisplayObjectContainer {
       this.label.parent.removeChild(this.label);
     }
 
-    var frameId = "element-" + identifier + ".png";
-    if (PIXI.TextureCache[ frameId ]) {
-      this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame(frameId));
-      this.addChild(this.icon)
-    }
-
     this.data = _default[ identifier ] || combinations[ identifier ];
     this.identifier = identifier;
 
     this.label = new PIXI.Text(this.data.label, {
       font: DEFAULT_FONT,
       fill: "#fff",
-      align: "center"
+      align: "center",
+      wordWrap: true,
+      wordWrapWidth: 200
     });
     this.addChild(this.label);
+
+    var frameId = "element-" + identifier + ".png";
+    if (PIXI.TextureCache[ frameId ]) {
+      this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame(frameId));
+      this.icon.x = this.label.width / 2 - this.icon.width / 2
+      this.icon.y = -(this.icon.height + 4)
+      this.addChild(this.icon)
+    }
+
   }
 
   update() {
