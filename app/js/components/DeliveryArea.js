@@ -13,6 +13,7 @@ export default class DeliveryArea extends PIXI.DisplayObjectContainer {
     });
 
     this.element = null;
+    this.onDeliver = null;
 
     this.button = new DeliverButton();
     this.button.x = 4;
@@ -54,10 +55,17 @@ export default class DeliveryArea extends PIXI.DisplayObjectContainer {
   }
 
   doDeliver() {
-    // TODO: check result
-    sounds.play('game_craft_deliver')
-    this.element.remove();
-    this.onCancelDelivery();
+    if (this.button.enabled) {
+      // TODO: check result
+      sounds.play('game_craft_deliver')
+
+      if (this.onDeliver) {
+        this.onDeliver(this.element);
+      }
+
+      this.element.remove();
+      this.onCancelDelivery();
+    }
   }
 
 }

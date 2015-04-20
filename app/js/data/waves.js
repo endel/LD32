@@ -12,7 +12,7 @@ export default {
       "good": "Good job smith, they're running!",
       "bad": "What sort of weapon was that? A child's toy?"
     }
-  },
+  ],
   "easy": [
     {
       "text": "More enemies have arrived, but all our steel is gone!",

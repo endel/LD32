@@ -29,8 +29,6 @@ export default class TalkBox extends PIXI.DisplayObjectContainer {
     this.addChild(this.text);
 
     events.on('talk', function() { this.talk.apply(this, arguments); }.bind(this))
-
-    this.talk("pictureCustomer_0001.png", "Consectetur id quae ea eius atque! Totam quaerat sunt doloribus vero est doloribus sapiente unde doloribus, molestiae. Nihil sit non cumque rem facilis! Quas architecto consectetur veritatis corrupti magni voluptatum.")
   }
 
   talk(frameId, text) {

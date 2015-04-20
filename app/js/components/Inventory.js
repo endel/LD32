@@ -15,9 +15,17 @@ export default class Inventory extends PIXI.Sprite {
     this.elements = []
   }
 
-  setup() {
-    for (var name in elements.default) {
-      this.addElement(new Element(name));
+  setup(elements) {
+    // remove previous elements
+    while (this.elements.length > 0) {
+      this.elements[0].parent.removeChild(this.elements[0]);
+      this.removeElement(this.elements[0])
+    }
+
+    // add new elements
+    elements = shuffle(elements);
+    for (var i=0; i<elements.length; i++) {
+      this.addElement(new Element(elements[i]));
     }
   }
 

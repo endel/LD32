@@ -10,6 +10,12 @@ export default class Craft extends PIXI.Stage {
   constructor() {
     super();
 
+    sounds.stop('game_music')
+
+    // play background sound
+    sounds.fade(0.0, 1.0, 2000);
+    sounds.play('game_background');
+
     var boxMargin = 16;
 
     this.hud = new Hud();
@@ -18,7 +24,12 @@ export default class Craft extends PIXI.Stage {
     this.workingArea = new WorkingArea(this.inventory);
     this.deliveryArea = new DeliveryArea();
 
-    // this.waveController = new WaveController();
+    this.waveController = new WaveController({
+      deliveryArea: this.deliveryArea,
+      hud: this.hud,
+      inventory: this.inventory,
+      workingArea: this.workingArea
+    });
 
     this.bg = new PIXI.TilingSprite(
       PIXI.Texture.fromFrame("inGameBG.png"),
@@ -46,8 +57,7 @@ export default class Craft extends PIXI.Stage {
 
     this.addChild(this.hud);
 
-    // setup
-    this.inventory.setup();
+    this.waveController.start();
   }
 
   update() {
