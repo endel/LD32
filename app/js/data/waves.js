@@ -1,5 +1,6 @@
 export default {
-  "intro":  {
+  "intro": [
+  {
     "text": "The enemies have arrived to our village! You need to help us by crafting weapons before the waves come, so we can survive!",
     "countdown": 20,
     "inventory": ["steel", "silver", "cloth"],
@@ -12,6 +13,7 @@ export default {
       "good": "Good job smith, they're running!",
       "bad": "What sort of weapon was that? A child's toy?"
     }
+  }
   ],
   "easy": [
     {
