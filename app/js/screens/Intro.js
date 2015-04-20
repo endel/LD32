@@ -82,6 +82,7 @@ export default class Intro extends PIXI.Stage {
     {
         blacksmithTalk.visible = !blacksmithTalk.visible;
         blacksmithIdle.visible = !blacksmithIdle.visible;
+        welcome.visible = blacksmithIdle.visible;
     }
     
     var credits = new PIXI.Sprite(PIXI.Texture.fromFrame("homecredits.png"));
@@ -189,6 +190,17 @@ export default class Intro extends PIXI.Stage {
     tomo.mouseout = this.hideAbout.bind(tomoabout);
 
 
+    var welcome = new PIXI.Sprite(PIXI.Texture.fromFrame("homeballon1.png"));
+    welcome.anchor.x = 0;
+    welcome.anchor.y = 0;
+    welcome.x = blacksmithTalk.x + 50;
+    welcome.y = blacksmithTalk.y - 75;
+    welcome.visible = true;
+    welcome.alpha = 0;
+    this.addChild(welcome);
+
+
+
     // move guys
     TweenMax.from(store, 2.0, { x: SCREEN_WIDTH + store.width, ease: Power1.easeOut })
     TweenMax.from(balcony, 2.0, { x: SCREEN_WIDTH + store.width/2, ease: Power1.easeOut })
@@ -197,7 +209,7 @@ export default class Intro extends PIXI.Stage {
     TweenMax.from(credits, 2.0, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut })
     TweenMax.from(blacksmithTalk, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.from(blacksmithIdle, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
-
+    TweenMax.to(welcome, 0.2, { alpha:1, delay:2.2, ease: Power1.easeOut })
     TweenMax.to(cloud1, 40.0, { x: -300, repeat: 10 })
     TweenMax.to(cloud2, 50.0, { x: -300, delay:3, repeat: 10 })
 
