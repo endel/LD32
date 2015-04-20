@@ -1,7 +1,7 @@
 export default {
   "intro":  {
     "text": "The enemies have arrived to our village! You need to help us by crafting weapons before the waves come, so we can survive!",
-    "countdown": 10,
+    "countdown": 20,
     "inventory": ["steel", "silver", "cloth"],
     "responses": {
       "long-sword": "great",
@@ -16,7 +16,7 @@ export default {
   "easy": [
     {
       "text": "More enemies have arrived, but all our steel is gone!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["iron", "copper", "leather"],
       "responses": {
         "king's-sword": "great",
@@ -30,7 +30,7 @@ export default {
     },
     {
       "text": "We are running out of resources. Be creative!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["cotton", "bronze", "fabric"],
       "responses": {
         "fiber-sword": "great",
@@ -44,7 +44,7 @@ export default {
     },
     {
       "text": "The boys brought what they've found in the barns... and the styes!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["stone", "silk", "mud"],
       "responses": {
         "stone-sword": "great",
@@ -58,7 +58,7 @@ export default {
     },
     {
       "text": "The village masons came to help!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["wood", "stone", "sand"],
       "responses": {
         "wood-spear": "great",
@@ -72,7 +72,7 @@ export default {
     },
     {
       "text": "We are looting what we can from the village.",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["mud", "wood", "dust"],
       "responses": {
         "double-wooden-sword": "great",
@@ -88,7 +88,7 @@ export default {
   "medium": [
     {
       "text": "Our stash was robbed! This is everything I found to help you...",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["cat", "boots", "straw"],
       "responses": {
         "battle-cat": "great",
@@ -102,7 +102,7 @@ export default {
     },
     {
       "text": "The enemies brought an arcane! Do we have anything useful?",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["tissue", "candles", "brass"],
       "responses": {
         "fire-sword": "great",
@@ -116,7 +116,7 @@ export default {
     },
     {
       "text": "The enemies have battle dogs! We are doomed!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["ragdoll", "pepper", "lemon"],
       "responses": {
         "super-hot-doll": "great",
@@ -130,7 +130,7 @@ export default {
     },
     {
       "text": "Bats! Bats everywhere!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["banana", "log", "apple"],
       "responses": {
         "torch": "great",
@@ -144,7 +144,7 @@ export default {
     },
     {
       "text": "Damn, they have clerigs! The enemies are healing their wounded!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["pillow", "beer-jug", "pumpkin"],
       "responses": {
         "beer-hammer": "great",
@@ -160,7 +160,7 @@ export default {
   "hard": [
     {
       "text": "The enemies grew tired of making sense! They brought bunnies!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["carrots", "vodka", "chocolate", "powder"],
       "responses": {
         "explosive-vodka-carrots": "great",
@@ -174,7 +174,7 @@ export default {
     },
     {
       "text": "The enemies brought pretty witches to enchant our soldiers! We need to do something!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["potion", "perfume", "cigarrete", "salt"],
       "responses": {
         "ogre-potion": "great",
@@ -188,7 +188,7 @@ export default {
     },
     {
       "text": "A dragon! They have a dragon!!!!!!!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["gnome", "spoon", "spear", "gear"],
       "responses": {
         "super-battle-gnome": "great",
@@ -202,7 +202,7 @@ export default {
     },
     {
       "text": "Their necromancer is reviving their fallen soldiers and turning them into zombies!",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["boombox", "bass", "crystal-gloves", "rune"],
       "responses": {
         "thriller": "great",
@@ -216,7 +216,7 @@ export default {
     },
     {
       "text": "What? The enemies have a Propeller Knight! How do we fight that?",
-      "countdown": 10,
+      "countdown": 20,
       "inventory": ["stick", "tavern-sign", "magic", "courage"],
       "responses": {
         "shovel-knight": "great",
