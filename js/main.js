@@ -368,7 +368,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
 
         if (result) {
           var messages = ["Yey.", "It worked.", "Sounds good."];
-          events.emit("talk", "pictureBlacksmith_0001.png", messages[Math.floor(Math.random() * messages.length)]);
+          events.emit("talk", "blacksmith", "happy", messages[Math.floor(Math.random() * messages.length)]);
 
           sounds.play("game_craft_success");
 
@@ -378,7 +378,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
         } else {
 
           var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."];
-          events.emit("talk", "pictureBlacksmith_0001.png", messages[Math.floor(Math.random() * messages.length)]);
+          events.emit("talk", "blacksmith", "sad", messages[Math.floor(Math.random() * messages.length)]);
 
           sounds.play("game_craft_fail");
           lastInteractionPoint = evt.global.clone();
@@ -493,7 +493,7 @@ var Hud = (function (_PIXI$DisplayObjectContainer) {
     addProgress: {
       value: function addProgress(kind) {
         var points = { bad: 0, good: 1, great: 2 };
-        var colors = { bad: "#C20A0A", good: "#FFC600", great: "#18A52A" };
+        var colors = { bad: "#f10000", good: "#FFC600", great: "#15e730" };
 
         var frameName = "progress-" + kind + ".png";
         var progressIcon = new PIXI.Sprite.fromFrame(frameName);
@@ -760,7 +760,7 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
     this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("textBox.png"));
     this.addChild(this.bg);
 
-    this.image = new PIXI.Sprite();
+    this.image = new PIXI.DisplayObjectContainer();
     this.image.x = this.margin;
     this.image.y = this.margin;
 
@@ -777,6 +777,28 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
     this.addChild(this.image);
     this.addChild(this.text);
 
+    this.currentAnimation = null;
+    this.animations = {
+      // customer animations
+      customer: {
+        normal: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureCustomer_0001.png"), PIXI.Texture.fromFrame("pictureCustomer_0002.png")]),
+        great: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureCustomer_0001.png"), PIXI.Texture.fromFrame("pictureCustomer_0002.png")]),
+        good: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureCustomer_0001.png"), PIXI.Texture.fromFrame("pictureCustomer_0004.png")]),
+        bad: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureCustomer_0005.png"), PIXI.Texture.fromFrame("pictureCustomer_0006.png")]) },
+
+      // blacksmith animations
+      blacksmith: {
+        idle: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureBlacksmith_0001.png"), PIXI.Texture.fromFrame("pictureBlacksmith_0002.png")]),
+        happy: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureBlacksmith_0003.png"), PIXI.Texture.fromFrame("pictureBlacksmith_0004.png"), PIXI.Texture.fromFrame("pictureBlacksmith_0005.png")]),
+        sad: new PIXI.MovieClip([PIXI.Texture.fromFrame("pictureBlacksmith_0006.png"), PIXI.Texture.fromFrame("pictureBlacksmith_0007.png")]) }
+    };
+
+    for (var person in this.animations) {
+      for (var mood in this.animations[person]) {
+        this.animations[person][mood].animationSpeed = 0.2;
+      }
+    }
+
     events.on("talk", (function () {
       this.talk.apply(this, arguments);
     }).bind(this));
@@ -786,17 +808,23 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
 
   _createClass(TalkBox, {
     talk: {
-      value: function talk(frameId, text) {
-        this.image.setTexture(PIXI.Texture.fromFrame(frameId));
+      value: function talk(who, mood, text) {
+        this.currentAnimation = this.animations[who][mood];
+
+        this.image.removeChildren();
+        this.image.addChild(this.currentAnimation);
+        this.currentAnimation.play();
+
         this.textToShow = text;
         this.textAppendCount = 0;
-        this.interval = setInterval(this.appendText.bind(this), 10);
+        this.interval = setInterval(this.appendText.bind(this), 40);
       }
     },
     appendText: {
       value: function appendText() {
         if (this.textAppendCount == this.textToShow.length) {
           clearInterval(this.interval);
+          this.currentAnimation.gotoAndStop(0);
         }
 
         this.text.setText(this.textToShow.substr(0, this.textAppendCount));
@@ -1041,7 +1069,8 @@ var WaveController = (function () {
     start: {
       value: function start() {
         events.emit("wave-start");
-        events.emit("talk", "pictureCustomer_0001.png", this.waveData.text);
+
+        events.emit("talk", "customer", "normal", this.waveData.text);
 
         this.currentTime = this.waveData.countdown + 1;
         this.timeTick();
@@ -1112,7 +1141,7 @@ var WaveController = (function () {
           sounds.play("game_wave_win");
         }
 
-        events.emit("talk", "pictureCustomer_0001.png", this.waveData.feedbacks[performance]);
+        events.emit("talk", "customer", performance, this.waveData.feedbacks[performance]);
 
         this.hud.addProgress(performance);
 
@@ -1128,7 +1157,7 @@ var WaveController = (function () {
           this.deliveryArea.doDeliver();
         } else {
           var messages = ["We ran out of time! We lost this round!", "Are you nuts, smith? We can't fight empty handed! We lost that one!"];
-          events.emit("talk", "pictureCustomer_0001.png", messages[Math.floor(Math.random() * messages.length)]);
+          events.emit("talk", "customer", "bad", messages[Math.floor(Math.random() * messages.length)]);
 
           this.hud.addProgress("bad");
           sounds.play("game_wave_lose");
@@ -1466,67 +1495,63 @@ module.exports={
     ],
     "game_clock_tick": [
       292000,
-      6123.854875283428
+      335.600907029459
     ],
     "game_craft_deliver": [
-      300000,
+      294000,
       1371.4285714285666
     ],
     "game_craft_fail": [
-      303000,
+      297000,
       1905.1020408163026
     ],
     "game_craft_perfect": [
-      306000,
+      300000,
       1683.9229024943165
     ],
     "game_craft_success": [
-      309000,
+      303000,
       1342.4036281178928
     ],
     "game_drop_item": [
-      312000,
+      306000,
       81.26984126982961
     ],
     "game_lose": [
-      314000,
+      308000,
       6000
     ],
     "game_music": [
-      321000,
+      315000,
       81841.6326530612
     ],
     "game_next": [
-      404000,
+      398000,
       1516.167800453502
     ],
-    "game_typewriter": [
-      407000,
-      7857.619047619039
-    ],
     "game_wave_lose": [
-      416000,
+      401000,
       1050.0000000000114
     ],
     "game_wave_win": [
-      419000,
+      404000,
       2560.0000000000023
     ],
     "game_win": [
-      423000,
+      408000,
       10000
     ],
     "intro_background": [
-      434000,
+      419000,
       250383.67346938775,
       true
     ],
     "intro_play": [
-      686000,
+      671000,
       936.4625850340644
     ],
     "intro_tip": [
-      688000,
+      673000,
       2063.673469387709
     ]
   }
@@ -1921,17 +1946,96 @@ var Intro = (function (_PIXI$Stage) {
     _get(Object.getPrototypeOf(Intro.prototype), "constructor", this).call(this);
     sounds.play("intro_background");
 
-    var background = new PIXI.Sprite(PIXI.Texture.fromFrame("home.png"));
+    var background = new PIXI.Sprite(PIXI.Texture.fromFrame("homebg.png"));
     this.addChild(background);
 
-    var startLabel = new PIXI.Text("click to craft", {
-      font: DEFAULT_FONT,
-      fill: "#372616",
-      align: "center"
-    });
-    startLabel.anchor.x = 0.5;
-    startLabel.x = SCREEN_WIDTH / 2;
-    startLabel.y = SCREEN_HEIGHT / 2 + 123;
+    var ground1 = new PIXI.Sprite(PIXI.Texture.fromFrame("homeground.png"));
+    ground1.y = SCREEN_HEIGHT - ground1.height;
+    this.addChild(ground1);
+
+    var ground2 = new PIXI.Sprite(PIXI.Texture.fromFrame("homeground.png"));
+    ground2.y = SCREEN_HEIGHT - ground1.height;
+    ground2.x = SCREEN_WIDTH;
+    this.addChild(ground2);
+
+    var cloud1 = new PIXI.Sprite(PIXI.Texture.fromFrame("homecloud1.png"));
+    cloud1.y = 120;
+    cloud1.x = SCREEN_WIDTH / 2 - 100;
+    this.addChild(cloud1);
+
+    var cloud2 = new PIXI.Sprite(PIXI.Texture.fromFrame("homecloud2.png"));
+    cloud2.y = 50;
+    cloud2.x = SCREEN_WIDTH - 100;
+    this.addChild(cloud2);
+
+    var store = new PIXI.Sprite(PIXI.Texture.fromFrame("homestore.png"));
+    store.anchor.x = 0.5;
+    store.x = SCREEN_WIDTH / 2;
+    store.y = 0;
+    this.addChild(store);
+
+    // create an array to store the textures
+    var faceIdle = [];
+    for (var i = 0; i < 3; i++) {
+      var texture = PIXI.Texture.fromFrame("homeBlacksmith_000" + (i + 1) + ".png");
+      faceIdle.push(texture);
+    };
+
+    var faceTalk = [];
+    for (var i = 3; i < 5; i++) {
+      var texture = PIXI.Texture.fromFrame("homeBlacksmith_000" + (i + 1) + ".png");
+      faceTalk.push(texture);
+    };
+
+    // create an explosion MovieClip
+    var blacksmithIdle = new PIXI.MovieClip(faceIdle);
+    blacksmithIdle.position.x = SCREEN_WIDTH / 2;
+    blacksmithIdle.position.y = 314;
+    blacksmithIdle.anchor.x = 0.5;
+    blacksmithIdle.anchor.y = 0.5;
+    blacksmithIdle.gotoAndPlay(0);
+    blacksmithIdle.animationSpeed = 0.1;
+    this.addChild(blacksmithIdle);
+
+    // create an explosion MovieClip
+    var blacksmithTalk = new PIXI.MovieClip(faceTalk);
+    blacksmithTalk.position.x = SCREEN_WIDTH / 2;
+    blacksmithTalk.position.y = 314;
+    blacksmithTalk.anchor.x = 0.5;
+    blacksmithTalk.anchor.y = 0.5;
+    blacksmithTalk.gotoAndPlay(0);
+    blacksmithTalk.animationSpeed = 0.05;
+    this.addChild(blacksmithTalk);
+    blacksmithTalk.visible = false;
+
+    window.faceChange = setInterval(changeFace, 3000);
+
+    var balcony = new PIXI.Sprite(PIXI.Texture.fromFrame("homebalconi.png"));
+    balcony.anchor.x = 0.5;
+    balcony.x = SCREEN_WIDTH / 2;
+    balcony.y = 304;
+    this.addChild(balcony);
+
+    function changeFace() {
+      blacksmithTalk.visible = !blacksmithTalk.visible;
+      blacksmithIdle.visible = !blacksmithIdle.visible;
+    }
+
+    // move guys
+    TweenMax.from(store, 2, { x: SCREEN_WIDTH + store.width, ease: Power1.easeOut });
+    TweenMax.from(balcony, 2, { x: SCREEN_WIDTH + store.width / 2, ease: Power1.easeOut });
+    TweenMax.to(ground1, 2, { x: -SCREEN_WIDTH, ease: Power1.easeOut });
+    TweenMax.to(ground2, 2, { x: 0, ease: Power1.easeOut });
+    TweenMax.from(blacksmithTalk, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
+    TweenMax.from(blacksmithIdle, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
+
+    var startLabel = new PIXI.Graphics();
+    startLabel.alpha = 0;
+    startLabel.beginFill(16776960);
+    startLabel.lineStyle(5, 16711680);
+    startLabel.drawRect(0, 0, 300, 50);
+    startLabel.x = SCREEN_WIDTH / 2 - startLabel.width / 2;
+    startLabel.y = SCREEN_HEIGHT / 2 + 115;
     startLabel.interactive = true;
     startLabel.click = startLabel.tap = this.startGame.bind(this);
     this.addChild(startLabel);
@@ -1942,6 +2046,7 @@ var Intro = (function (_PIXI$Stage) {
   _createClass(Intro, {
     startGame: {
       value: function startGame() {
+        clearInterval(window.faceChange);
         sounds.play("intro_play");
         controller.setStage(new Craft());
       }
