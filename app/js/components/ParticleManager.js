@@ -12,9 +12,10 @@ export default class ParticleManager {
     var i = this.emitters.length;
     while (i--) {
       this.emitters[i].update();
-      if (!this.emitters[i].alive) {
-        this.emitters[i].splice(i, 1);
-      }
+      // TODO: remove particle emitter
+      // if (!this.emitters[i].alive) {
+      //   this.emitters.splice(i, 1);
+      // }
     }
   }
 

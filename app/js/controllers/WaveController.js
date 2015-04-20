@@ -33,6 +33,7 @@ export default class WaveController {
   }
 
   start() {
+    events.emit('wave-start');
     events.emit('talk', "pictureCustomer_0001.png", this.waveData.text);
 
     this.currentTime = this.waveData.countdown + 1;
@@ -60,6 +61,8 @@ export default class WaveController {
   }
 
   nextWave() {
+    events.emit('wave-prepare');
+
     if (this.timeInterval) {
       clearInterval(this.timeInterval);
       this.timeInterval = null;

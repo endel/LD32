@@ -15,6 +15,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
     this.setIdentifier(identifier);
     this.isBase = isBase
     this.isDelivering = false;
+    this.isDragging = false;
 
     this.draggable({
       label: (isBase ? "inventory" : "working"),
@@ -32,6 +33,20 @@ export default class Element extends PIXI.DisplayObjectContainer {
       drop: this.onDrop.bind(this),
       greedy: true // prevent event propagation
     });
+
+    events.on('wave-prepare', this.disableInteractivity.bind(this))
+    events.on('wave-start', this.enableInteractivity.bind(this))
+  }
+
+  disableInteractivity() {
+    if (this.isDragging) {
+      controller.currentStage.interactionManager.DragAndDropManager.destroyHelperSprite(this);
+    }
+    this.interactive = false;
+  }
+
+  enableInteractivity() {
+    this.interactive = true;
   }
 
   setIdentifier(identifier) {
@@ -73,6 +88,9 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
   dragStart(element, evt) {
     sounds.play('game_choose_item')
+
+    this.isDragging = true;
+
     // cancel delivery if this element is being delivered
     if (this.isDelivering) {
       events.emit('cancel-delivery');
@@ -81,6 +99,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
   }
 
   dragStop(element, evt) {
+    this.isDragging = false;
+
     // need to check this on drop + drag stop
     if (lastInteractionPoint.x !== evt.global.x &&
         lastInteractionPoint.y !== evt.global.y) {
