@@ -103,6 +103,19 @@ var DeliveryArea = (function (_PIXI$DisplayObjectContainer) {
     this.addChild(this.button);
     this.button.click = this.button.tap = this.doDeliver.bind(this);
 
+    this.instructionLabel = new PIXI.Text("Place here your finished weapon", {
+      font: DEFAULT_FONT,
+      fill: "#fff",
+      align: "center",
+      wordWrap: true,
+      wordWrapWidth: this.width - 40
+    });
+    this.instructionLabel.anchor.x = 0.5;
+    this.instructionLabel.anchor.y = 0.5;
+    this.instructionLabel.x = this.width / 2;
+    this.instructionLabel.y = this.height / 2 - 42;
+    this.addChild(this.instructionLabel);
+
     events.on("cancel-delivery", this.onCancelDelivery.bind(this));
   }
 
@@ -111,6 +124,11 @@ var DeliveryArea = (function (_PIXI$DisplayObjectContainer) {
   _createClass(DeliveryArea, {
     onDrop: {
       value: function onDrop(element, move) {
+        // remove instruction label if it still on stage
+        if (this.instructionLabel.parent) {
+          this.instructionLabel.parent.removeChild(this.instructionLabel);
+        }
+
         console.log("Dropped: ", element);
 
         if (element.isBase) {
@@ -128,6 +146,13 @@ var DeliveryArea = (function (_PIXI$DisplayObjectContainer) {
 
         // WORKAROUND: this shouldn't be needed here.
         element.dragOptions.revert = false;
+
+        // snap element into delivery area
+        element.x = this.x + (this.area.width / 2 - element.width / 2);
+        element.y = this.y + this.area.height / 2;
+        if (element.icon) {
+          element.y += element.height / 4;
+        }
 
         this.element = element;
         this.element.isDelivering = true;
@@ -196,6 +221,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
     this.setIdentifier(identifier);
     this.isBase = isBase;
     this.isDelivering = false;
+    this.isDragging = false;
 
     this.draggable({
       label: isBase ? "inventory" : "working",
@@ -213,11 +239,27 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
       drop: this.onDrop.bind(this),
       greedy: true // prevent event propagation
     });
+
+    events.on("wave-prepare", this.disableInteractivity.bind(this));
+    events.on("wave-start", this.enableInteractivity.bind(this));
   }
 
   _inherits(Element, _PIXI$DisplayObjectContainer);
 
   _createClass(Element, {
+    disableInteractivity: {
+      value: function disableInteractivity() {
+        if (this.isDragging) {
+          controller.currentStage.interactionManager.DragAndDropManager.destroyHelperSprite(this);
+        }
+        this.interactive = false;
+      }
+    },
+    enableInteractivity: {
+      value: function enableInteractivity() {
+        this.interactive = true;
+      }
+    },
     setIdentifier: {
       value: function setIdentifier(identifier) {
         // remove previous icon
@@ -230,21 +272,25 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
           this.label.parent.removeChild(this.label);
         }
 
-        var frameId = "element-" + identifier + ".png";
-        if (PIXI.TextureCache[frameId]) {
-          this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame(frameId));
-          this.addChild(this.icon);
-        }
-
         this.data = _default[identifier] || combinations[identifier];
         this.identifier = identifier;
 
         this.label = new PIXI.Text(this.data.label, {
           font: DEFAULT_FONT,
           fill: "#fff",
-          align: "center"
+          align: "center",
+          wordWrap: true,
+          wordWrapWidth: 200
         });
         this.addChild(this.label);
+
+        var frameId = "element-" + identifier + ".png";
+        if (PIXI.TextureCache[frameId]) {
+          this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame(frameId));
+          this.icon.x = this.label.width / 2 - this.icon.width / 2;
+          this.icon.y = -(this.icon.height + 4);
+          this.addChild(this.icon);
+        }
       }
     },
     update: {
@@ -260,6 +306,9 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
     dragStart: {
       value: function dragStart(element, evt) {
         sounds.play("game_choose_item");
+
+        this.isDragging = true;
+
         // cancel delivery if this element is being delivered
         if (this.isDelivering) {
           events.emit("cancel-delivery");
@@ -269,6 +318,8 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
     },
     dragStop: {
       value: function dragStop(element, evt) {
+        this.isDragging = false;
+
         // need to check this on drop + drag stop
         if (lastInteractionPoint.x !== evt.global.x && lastInteractionPoint.y !== evt.global.y) {
           sounds.play("game_drop_item");
@@ -312,8 +363,8 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
 
           // TODO: this is not working!
           var emitter = new ParticleEmitter();
-          emitter.x = this.x;
-          emitter.y = this.y;
+          emitter.x = this.x + this.width / 2;
+          emitter.y = this.y + this.height / 2;
           this.parent.addChild(emitter);
           emitter.update();
 
@@ -356,7 +407,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
 
 module.exports = Element;
 
-},{"../data/elements":11,"./ParticleEmitter":6}],4:[function(require,module,exports){
+},{"../data/elements":12,"./ParticleEmitter":6}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -498,7 +549,7 @@ var Inventory = (function (_PIXI$Sprite) {
 
 module.exports = Inventory;
 
-},{"../data/elements":11,"./Element":3}],6:[function(require,module,exports){
+},{"../data/elements":12,"./Element":3}],6:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -515,36 +566,28 @@ var ParticleEmitter = (function (_PIXI$DisplayObjectContainer) {
 
     _get(Object.getPrototypeOf(ParticleEmitter.prototype), "constructor", this).call(this);
 
-    this.ttl = 100;
+    this.ttl = 10;
+    this.life = this.ttl;
+    this.alive = true;
+
     this.elapsed = Date.now();
 
-    this.emitter = new cloudkid.Emitter(
-    // The DisplayObjectContainer to put the emitter in
-    // if using blend modes, it's important to put this
-    // on top of a bitmap, and not use the PIXI.Stage
-    this,
-
-    // The collection of particle images to use
-    [PIXI.Texture.fromFrame("dust-particle.png")],
-
-    // Emitter configuration, edit this to change the look
-    // of the emitter
-    {
+    this.emitter = new cloudkid.Emitter(this, [PIXI.Texture.fromFrame("dust-particle.png")], {
       alpha: {
         start: 0.8,
-        end: 0.1
+        end: 0
       },
       scale: {
         start: 1,
-        end: 0.3
+        end: 2
       },
       // "color": {
       //   "start": "fb1010",
       //   "end": "f5b830"
       // },
       speed: {
-        start: 200,
-        end: 100
+        start: 250,
+        end: 150
       },
       startRotation: {
         min: 0,
@@ -555,12 +598,12 @@ var ParticleEmitter = (function (_PIXI$DisplayObjectContainer) {
         max: 0
       },
       lifetime: {
-        min: 0.5,
-        max: 0.5
+        min: 0.15,
+        max: 0.3
       },
       frequency: 0.008,
-      emitterLifetime: 0.31,
-      maxParticles: 1000,
+      emitterLifetime: 0.1,
+      maxParticles: 100,
       pos: {
         x: 0,
         y: 0
@@ -574,6 +617,8 @@ var ParticleEmitter = (function (_PIXI$DisplayObjectContainer) {
       }
     });
     this.emitter.emit = true;
+
+    controller.particleManager.push(this);
   }
 
   _inherits(ParticleEmitter, _PIXI$DisplayObjectContainer);
@@ -584,6 +629,11 @@ var ParticleEmitter = (function (_PIXI$DisplayObjectContainer) {
         var now = Date.now();
         this.emitter.update((now - this.elapsed) * 0.001);
         this.elapsed = now;
+
+        this.life--;
+        if (this.life < 0) {
+          this.alive = false;
+        }
       }
     }
   });
@@ -594,6 +644,45 @@ var ParticleEmitter = (function (_PIXI$DisplayObjectContainer) {
 module.exports = ParticleEmitter;
 
 },{}],7:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var ParticleManager = (function () {
+  function ParticleManager() {
+    _classCallCheck(this, ParticleManager);
+
+    this.emitters = [];
+  }
+
+  _createClass(ParticleManager, {
+    push: {
+      value: function push(emitter) {
+        this.emitters.push(emitter);
+      }
+    },
+    update: {
+      value: function update() {
+        var i = this.emitters.length;
+        while (i--) {
+          this.emitters[i].update();
+          // TODO: remove particle emitter
+          // if (!this.emitters[i].alive) {
+          //   this.emitters.splice(i, 1);
+          // }
+        }
+      }
+    }
+  });
+
+  return ParticleManager;
+})();
+
+module.exports = ParticleManager;
+
+},{}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -668,7 +757,7 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
 
 module.exports = TalkBox;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -696,8 +785,15 @@ var WorkingArea = (function (_PIXI$Sprite) {
     this.elements = [];
     this.maxElements = 2;
 
-    this.width = SCREEN_WIDTH / 2;
-    this.height = SCREEN_HEIGHT / 2;
+    this.instructionLabel = new PIXI.Text("Create your weapons here", {
+      font: DEFAULT_FONT,
+      fill: "#fff",
+      align: "center" });
+    this.instructionLabel.anchor.x = 0.5;
+    this.instructionLabel.anchor.y = 0.5;
+    this.instructionLabel.x = this.width / 2;
+    this.instructionLabel.y = this.height / 2;
+    this.addChild(this.instructionLabel);
 
     this.droppable({
       accepts: "draggable",
@@ -725,6 +821,11 @@ var WorkingArea = (function (_PIXI$Sprite) {
     },
     onDrop: {
       value: function onDrop(originalElement, mouse) {
+        // remove instruction label if it still on stage
+        if (this.instructionLabel.parent) {
+          this.instructionLabel.parent.removeChild(this.instructionLabel);
+        }
+
         var element = originalElement;
         var dragOptions = element.dragOptions;
 
@@ -752,8 +853,10 @@ var WorkingArea = (function (_PIXI$Sprite) {
 
 module.exports = WorkingArea;
 
-},{"../data/elements":11,"./Element":3}],9:[function(require,module,exports){
+},{"../data/elements":12,"./Element":3}],10:[function(require,module,exports){
 "use strict";
+
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -761,12 +864,15 @@ var _get = function get(object, property, receiver) { var desc = Object.getOwnPr
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+var ParticleManager = _interopRequire(require("../components/ParticleManager"));
+
 var GameController = (function () {
   function GameController() {
     _classCallCheck(this, GameController);
 
     _get(Object.getPrototypeOf(GameController.prototype), "constructor", this).call(this);
     this.currentStage = null;
+    this.particleManager = new ParticleManager();
     this.stages = [];
   }
 
@@ -784,6 +890,8 @@ var GameController = (function () {
     },
     update: {
       value: function update() {
+        this.particleManager.update();
+
         if (this.currentStage) {
           this.currentStage.update();
         }
@@ -813,7 +921,7 @@ var GameController = (function () {
 
 module.exports = GameController;
 
-},{}],10:[function(require,module,exports){
+},{"../components/ParticleManager":7}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -878,6 +986,7 @@ var WaveController = (function () {
     },
     start: {
       value: function start() {
+        events.emit("wave-start");
         events.emit("talk", "pictureCustomer_0001.png", this.waveData.text);
 
         this.currentTime = this.waveData.countdown + 1;
@@ -908,6 +1017,8 @@ var WaveController = (function () {
     },
     nextWave: {
       value: function nextWave() {
+        events.emit("wave-prepare");
+
         if (this.timeInterval) {
           clearInterval(this.timeInterval);
           this.timeInterval = null;
@@ -965,7 +1076,7 @@ var WaveController = (function () {
 
 module.exports = WaveController;
 
-},{"../data/waves":13}],11:[function(require,module,exports){
+},{"../data/waves":14}],12:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -1053,7 +1164,7 @@ module.exports = {
       requirements: ["cloth", "cloth"]
     },
 
-    "king's-sword": {
+    "kings-sword": {
       label: "King's Sword",
       requirements: ["leathered-sword", "iron"]
     },
@@ -1263,7 +1374,7 @@ module.exports = {
 
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports={
   "urls": [
     "sound/sound_effects.ogg",
@@ -1344,7 +1455,7 @@ module.exports={
     ]
   }
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -1367,7 +1478,7 @@ module.exports = {
     countdown: 20,
     inventory: ["iron", "copper", "leather"],
     responses: {
-      "king's-sword": "great",
+      "kings-sword": "great",
       "leathered-sword ": "good"
     },
     feedbacks: {
@@ -1562,7 +1673,7 @@ module.exports = {
   }]
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1616,7 +1727,7 @@ window.controller = new GameController();
 controller.setStage(new Loader());
 controller.start();
 
-},{"./controllers/GameController":9,"./data/sound_effects.json":12,"./screens/Loader":17,"./vendor/array.shuffle":18,"./vendor/generatorRuntime":19,"./vendor/pixi.draggable":20,"./vendor/pixi.particles":21,"howler":22,"pixi.js":23,"wolfy87-eventemitter":24}],15:[function(require,module,exports){
+},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Loader":18,"./vendor/array.shuffle":19,"./vendor/generatorRuntime":20,"./vendor/pixi.draggable":21,"./vendor/pixi.particles":22,"howler":23,"pixi.js":24,"wolfy87-eventemitter":25}],16:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1706,7 +1817,7 @@ var Craft = (function (_PIXI$Stage) {
 
 module.exports = Craft;
 
-},{"../components/DeliveryArea":2,"../components/Hud":4,"../components/Inventory":5,"../components/TalkBox":7,"../components/WorkingArea":8,"../controllers/WaveController":10}],16:[function(require,module,exports){
+},{"../components/DeliveryArea":2,"../components/Hud":4,"../components/Inventory":5,"../components/TalkBox":8,"../components/WorkingArea":9,"../controllers/WaveController":11}],17:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1763,7 +1874,7 @@ var Intro = (function (_PIXI$Stage) {
 
 module.exports = Intro;
 
-},{"./Craft":15}],17:[function(require,module,exports){
+},{"./Craft":16}],18:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1830,7 +1941,7 @@ var Loader = (function (_PIXI$Stage) {
 
 module.exports = Loader;
 
-},{"./Intro":16}],18:[function(require,module,exports){
+},{"./Intro":17}],19:[function(require,module,exports){
 "use strict";
 
 window.shuffle = function (array) {
@@ -1854,7 +1965,7 @@ window.shuffle = function (array) {
   return array;
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (global){
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -2394,7 +2505,7 @@ window.shuffle = function (array) {
 typeof global === "object" ? global : typeof window === "object" ? window : typeof self === "object" ? self : undefined);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
 * The MIT License (MIT)
 *
@@ -3453,7 +3564,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
     };
 })();
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /*! PixiParticles 1.4.1 */
 /**
 *  @module cloudkid
@@ -5127,7 +5238,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
 //that the movieclip will animate even if the emitter (and the particles)
 //are paused
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*!
  *  howler.js v1.1.25
  *  howlerjs.com
@@ -6482,7 +6593,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
 
 })();
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /**
  * @license
  * pixi.js - v2.2.9
@@ -26861,7 +26972,7 @@ Object.defineProperty(PIXI.RGBSplitFilter.prototype, 'blue', {
         root.PIXI = PIXI;
     }
 }).call(this);
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.11 - git.io/ee
  * Unlicense - http://unlicense.org/
@@ -27335,4 +27446,4 @@ Object.defineProperty(PIXI.RGBSplitFilter.prototype, 'blue', {
     }
 }.call(this));
 
-},{}]},{},[14]);
+},{}]},{},[15]);
