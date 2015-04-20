@@ -68,12 +68,14 @@ export default class WaveController {
     // clear working area
     this.workingArea.clear();
 
-    if (this.sectionIndex + 1 >= waves[this.section].length) {
+    if (this.sectionIndex + 1 >= Math.clamp(waves[this.section].length, 0, 3)) {
       this.sectionIndex = 0;
       this.section = this.sectionIterator.next().value
     } else {
       this.sectionIndex++;
     }
+
+    console.log(this.section);
 
     this.waveData = waves[this.section][this.sectionIndex];
     this.currentWave++;
