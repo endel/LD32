@@ -26,12 +26,21 @@ export default class DeliveryArea extends PIXI.DisplayObjectContainer {
   onDrop(element, move) {
     console.log("Dropped: ", element);
 
+    if (element.isBase) {
+      element.dragOptions.revert = true;
+      element.dragOptions.revertDuration = 0;
+      return;
+    }
+
     if (this.element) {
       console.log("Have element! Let's cancel this.")
       element.dragOptions.revert = true
       element.dragOptions.revertDuration = 0;
       return;
     }
+
+    // WORKAROUND: this shouldn't be needed here.
+    element.dragOptions.revert = false;
 
     this.element = element;
     this.element.isDelivering = true;

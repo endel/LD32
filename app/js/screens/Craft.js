@@ -17,6 +17,8 @@ export default class Craft extends PIXI.Stage {
     this.workingArea = new WorkingArea(this.inventory);
     this.deliveryArea = new DeliveryArea();
 
+    // this.waveController = new WaveController();
+
     this.bg = new PIXI.TilingSprite(
       PIXI.Texture.fromFrame("inGameBG.png"),
       SCREEN_WIDTH,

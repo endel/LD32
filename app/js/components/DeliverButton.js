@@ -28,14 +28,12 @@ export default class DeliveryArea extends PIXI.Sprite {
   }
 
   onMouseOver() {
-    console.log("Mouse hover...")
     if (this._enabled) {
       this.setTexture(this.textures['hover']);
     }
   }
 
   onMouseOut() {
-    console.log("Mouse out...")
     if (this._enabled) {
       this.setTexture(this.textures['normal']);
     }

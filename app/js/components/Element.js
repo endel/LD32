@@ -38,11 +38,18 @@ export default class Element extends PIXI.DisplayObjectContainer {
     // remove previous icon
     if (this.icon) {
       this.icon.parent.removeChild(this.icon);
+      this.icon = null;
+    }
+
+    if (this.label) {
       this.label.parent.removeChild(this.label);
     }
 
-    this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame("element-" + identifier + ".png"));
-    this.addChild(this.icon)
+    var frameId = "element-" + identifier + ".png";
+    if (PIXI.TextureCache[ frameId ]) {
+      this.icon = new PIXI.Sprite(PIXI.Texture.fromFrame(frameId));
+      this.addChild(this.icon)
+    }
 
     this.data = _default[ identifier ] || combinations[ identifier ];
     this.identifier = identifier;
@@ -84,7 +91,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
     let result = this.combine(element);
 
     // cancel event when trying to drop directly on inventory
-    if (this.isBase) {
+    if (this.isBase || this.isDelivering) {
       element.dragOptions.revert = true;
       element.dragOptions.revertDuration = 0;
       return;
