@@ -79,8 +79,6 @@ export default class WaveController {
       this.sectionIndex++;
     }
 
-    console.log(this.section);
-
     this.waveData = waves[this.section][this.sectionIndex];
     this.currentWave++;
 
