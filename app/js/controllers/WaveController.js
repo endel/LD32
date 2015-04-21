@@ -121,6 +121,9 @@ export default class WaveController {
     events.emit('talk', 'customer', performance, this.waveData.feedbacks[ performance ]);
 
     this.hud.addProgress(performance);
+
+    _trackEvent("Finished Wave", "Wave " + this.currentWave, performance)
+
     this.nextWave()
   }
 
@@ -143,6 +146,7 @@ export default class WaveController {
       this.responses.push("bad");
       sounds.play('game_wave_lose');
 
+      _trackEvent("Finished Wave", "Wave " + this.currentWave, "time")
       this.nextWave()
     }
   }
