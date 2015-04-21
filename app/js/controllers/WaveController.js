@@ -35,9 +35,9 @@ export default class WaveController {
 
   *sectionList() {
     yield "intro";
-    yield "easy";
-    yield "medium";
-    yield "hard";
+    // yield "easy";
+    // yield "medium";
+    // yield "hard";
   }
 
   start() {
@@ -85,7 +85,9 @@ export default class WaveController {
 
       // wave is done! show end game screen
       if (nextSection.done) {
-        controller.setStage(new EndGame(this.responses))
+        setTimeout(function() {
+          controller.setStage(new EndGame(this.responses))
+        }, 2000)
         return;
       }
 
