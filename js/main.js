@@ -366,7 +366,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
         }
 
         if (result) {
-          var messages = ["Yey.", "It worked.", "Sounds good."];
+          var messages = ["Yey.", "It worked.", "Sounds good.", "That's it, I'm out.", "I like that."];
           events.emit("talk", "blacksmith", "happy", messages[Math.floor(Math.random() * messages.length)]);
 
           sounds.play("game_craft_success");
@@ -376,7 +376,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
           this.setIdentifier(result);
         } else {
 
-          var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."];
+          var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."];
           events.emit("talk", "blacksmith", "sad", messages[Math.floor(Math.random() * messages.length)]);
 
           sounds.play("game_craft_fail");
@@ -873,7 +873,15 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
 
         this.textToShow = text;
         this.textAppendCount = 0;
-        this.interval = setInterval(this.appendText.bind(this), 40);
+
+        var time = 40;
+        if (text.length > 60) {
+          time = 20;
+        } else if (text.length > 100) {
+          time = 10;
+        }
+
+        this.interval = setInterval(this.appendText.bind(this), time);
       }
     },
     appendText: {
@@ -1050,6 +1058,15 @@ var GameController = (function () {
           this.stages.push(this.currentStage);
         }
 
+        if (transition && this.currentStage && this.currentStage.transitionScreen) {
+          this.currentStage.transitionScreen.open(stage);
+        } else {
+          this.setCurrentStage(stage);
+        }
+      }
+    },
+    setCurrentStage: {
+      value: function setCurrentStage(stage) {
         if (this.currentStage) {
           this.currentStage.dispose();
         }
@@ -1060,9 +1077,6 @@ var GameController = (function () {
     loop: {
       value: function loop() {
         renderer.render(this.currentStage);
-        // for(var i=0,l=this.stages.length;i<l;i++) {
-        //   renderer.render(this.stages[i]);
-        // }
         window.requestAnimationFrame(this.loop.bind(this));
       }
     }
@@ -1194,7 +1208,9 @@ var WaveController = (function () {
 
           // wave is done! show end game screen
           if (nextSection.done) {
-            controller.setStage(new EndGame(this.responses));
+            setTimeout((function () {
+              controller.setStage(new EndGame(this.responses));
+            }).bind(this), 3000);
             return;
           }
 
@@ -1232,6 +1248,9 @@ var WaveController = (function () {
         events.emit("talk", "customer", performance, this.waveData.feedbacks[performance]);
 
         this.hud.addProgress(performance);
+
+        _trackEvent("Finished Wave", "Wave " + this.currentWave, performance);
+
         this.nextWave();
       }
     },
@@ -1251,6 +1270,7 @@ var WaveController = (function () {
           this.responses.push("bad");
           sounds.play("game_wave_lose");
 
+          _trackEvent("Finished Wave", "Wave " + this.currentWave, "time");
           this.nextWave();
         }
       }
@@ -1952,7 +1972,11 @@ window.controller = new GameController();
 controller.setStage(new Loader());
 controller.start();
 
-},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Intro":18,"./screens/Loader":19,"./vendor/array.shuffle":20,"./vendor/generatorRuntime":21,"./vendor/pixi.draggable":22,"./vendor/pixi.particles":23,"gsap":24,"howler":25,"pixi.js":26,"wolfy87-eventemitter":27}],16:[function(require,module,exports){
+window._trackEvent = function (a, b, c) {
+  ga("send", "event", a, b, c);
+};
+
+},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Intro":18,"./screens/Loader":19,"./vendor/array.shuffle":21,"./vendor/generatorRuntime":22,"./vendor/pixi.draggable":23,"./vendor/pixi.particles":24,"gsap":25,"howler":26,"pixi.js":27,"wolfy87-eventemitter":28}],16:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -2103,6 +2127,8 @@ var EndGame = (function (_PIXI$Stage) {
   _createClass(EndGame, {
     restartGame: {
       value: function restartGame() {
+        var feebackText = this.didWon ? "You've won!" : "You've lost!";
+        _trackEvent("Restarted", feebackText);
         events.removeAllListeners();
         controller.setStage(new Intro());
       }
@@ -2126,16 +2152,18 @@ var EndGame = (function (_PIXI$Stage) {
         }
 
         // play win / lose sound
-        var didWon = wonWaves >= 5;
+        this.didWon = wonWaves >= 5;
         sounds.stop();
         soundsBackground.stop();
-        if (didWon) {
+        if (this.didWon) {
           sounds.play("game_win");
+          _trackEvent("Endgame", "Win");
         } else {
           sounds.play("game_lose");
+          _trackEvent("Endgame", "Lose");
         }
 
-        var feebackText = didWon ? "You've won!" : "You've lost!";
+        var feebackText = this.didWon ? "You've won!" : "You've lost!";
         this.feedbackLabel = new PIXI.Text(feebackText, {
           font: DEFAULT_FONT,
           fill: "#fff",
@@ -2215,6 +2243,8 @@ var _inherits = function (subClass, superClass) { if (typeof superClass !== "fun
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+var TransitionScreen = _interopRequire(require("./TransitionScreen"));
+
 var Craft = _interopRequire(require("./Craft"));
 
 var Intro = (function (_PIXI$Stage) {
@@ -2274,6 +2304,7 @@ var Intro = (function (_PIXI$Stage) {
     blacksmithIdle.gotoAndPlay(0);
     blacksmithIdle.animationSpeed = 0.1;
     this.addChild(blacksmithIdle);
+    blacksmithIdle.visible = false;
 
     // create an explosion MovieClip
     var blacksmithTalk = new PIXI.MovieClip(faceTalk);
@@ -2284,7 +2315,6 @@ var Intro = (function (_PIXI$Stage) {
     blacksmithTalk.gotoAndPlay(0);
     blacksmithTalk.animationSpeed = 0.05;
     this.addChild(blacksmithTalk);
-    blacksmithTalk.visible = false;
 
     window.faceChange = setInterval(changeFace, 3000);
 
@@ -2419,7 +2449,7 @@ var Intro = (function (_PIXI$Stage) {
     TweenMax.from(this.credits, 2, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut });
     TweenMax.from(blacksmithTalk, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
     TweenMax.from(blacksmithIdle, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
-    TweenMax.to(welcome, 0.2, { alpha: 1, delay: 2.2, ease: Power1.easeOut });
+    TweenMax.to(welcome, 0.2, { alpha: 1, delay: 2.8, ease: Power1.easeOut });
     TweenMax.to(cloud1, 40, { x: -300, repeat: 10 });
     TweenMax.to(cloud2, 50, { x: -300, delay: 3, repeat: 10 });
 
@@ -2434,6 +2464,9 @@ var Intro = (function (_PIXI$Stage) {
     this.startLabel.click = this.startLabel.tap = this.startGame.bind(this);
     this.startLabel.buttonMode = true;
     this.addChild(this.startLabel);
+
+    this.transitionScreen = new TransitionScreen();
+    this.addChild(this.transitionScreen);
   }
 
   _inherits(Intro, _PIXI$Stage);
@@ -2443,7 +2476,8 @@ var Intro = (function (_PIXI$Stage) {
       value: function startGame() {
         clearInterval(window.faceChange);
         sounds.play("intro_play");
-        controller.setStage(new Craft());
+
+        controller.setStage(new Craft(), true);
       }
     },
     showAbout: {
@@ -2510,7 +2544,7 @@ var Intro = (function (_PIXI$Stage) {
 
 module.exports = Intro;
 
-},{"./Craft":16}],19:[function(require,module,exports){
+},{"./Craft":16,"./TransitionScreen":20}],19:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2581,6 +2615,77 @@ module.exports = Loader;
 },{}],20:[function(require,module,exports){
 "use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var TransitionScreen = (function (_PIXI$DisplayObjectContainer) {
+  function TransitionScreen() {
+    _classCallCheck(this, TransitionScreen);
+
+    _get(Object.getPrototypeOf(TransitionScreen.prototype), "constructor", this).call(this);
+
+    this.stageTo = null;
+
+    // transition variables
+    this.leftDoor = new PIXI.Sprite(PIXI.Texture.fromFrame("transitionleft.png"));
+    this.leftDoor.x = -this.leftDoor.width;
+    this.addChild(this.leftDoor);
+
+    this.rightDoor = new PIXI.Sprite(PIXI.Texture.fromFrame("transitionright.png"));
+    this.rightDoor.x = SCREEN_WIDTH;
+    this.addChild(this.rightDoor);
+
+    this.renderable = false;
+  }
+
+  _inherits(TransitionScreen, _PIXI$DisplayObjectContainer);
+
+  _createClass(TransitionScreen, {
+    open: {
+      value: function open() {
+        var stageTo = arguments[0] === undefined ? null : arguments[0];
+
+        this.stageTo = stageTo;
+        this.renderable = true;
+        TweenMax.to(this.leftDoor, 1, { x: 0, ease: Power2.easeOut });
+        TweenMax.to(this.rightDoor, 1, { x: SCREEN_WIDTH / 2, ease: Power2.easeOut, onComplete: this.onOpenComplete.bind(this) });
+      }
+    },
+    onOpenComplete: {
+      value: function onOpenComplete() {
+        this.close();
+
+        this.parent.removeChild(this);
+        controller.setCurrentStage(this.stageTo);
+        this.stageTo.addChild(this);
+      }
+    },
+    close: {
+      value: function close() {
+        TweenMax.to(this.leftDoor, 1, { x: -this.leftDoor.width, ease: Power2.easeOut });
+        TweenMax.to(this.rightDoor, 1, { x: SCREEN_WIDTH, ease: Power2.easeOut, onComplete: this.onCloseComplete.bind(this) });
+      }
+    },
+    onCloseComplete: {
+      value: function onCloseComplete() {
+        this.renderable = false;
+      }
+    }
+  });
+
+  return TransitionScreen;
+})(PIXI.DisplayObjectContainer);
+
+module.exports = TransitionScreen;
+
+},{}],21:[function(require,module,exports){
+"use strict";
+
 window.shuffle = function (array) {
   var currentIndex = array.length,
       temporaryValue,
@@ -2602,7 +2707,7 @@ window.shuffle = function (array) {
   return array;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function (global){
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -3142,7 +3247,7 @@ window.shuffle = function (array) {
 typeof global === "object" ? global : typeof window === "object" ? window : typeof self === "object" ? self : undefined);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
 * The MIT License (MIT)
 *
@@ -4201,7 +4306,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
     };
 })();
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /*! PixiParticles 1.4.1 */
 /**
 *  @module cloudkid
@@ -5875,7 +5980,7 @@ PIXI.InteractionManager.prototype.rebuildInteractiveGraph = (function () {
 //that the movieclip will animate even if the emitter (and the particles)
 //are paused
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.16.1
@@ -13099,7 +13204,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*!
  *  howler.js v1.1.25
  *  howlerjs.com
@@ -14454,7 +14559,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 })();
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * @license
  * pixi.js - v2.2.9
@@ -34833,7 +34938,7 @@ Object.defineProperty(PIXI.RGBSplitFilter.prototype, 'blue', {
         root.PIXI = PIXI;
     }
 }).call(this);
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.11 - git.io/ee
  * Unlicense - http://unlicense.org/
