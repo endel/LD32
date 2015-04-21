@@ -58,6 +58,7 @@ export default class Intro extends PIXI.Stage {
     blacksmithIdle.gotoAndPlay(0);
     blacksmithIdle.animationSpeed = 0.1;
     this.addChild(blacksmithIdle);
+    blacksmithIdle.visible = false;
 
     // create an explosion MovieClip
     var blacksmithTalk = new PIXI.MovieClip(faceTalk);
@@ -68,7 +69,7 @@ export default class Intro extends PIXI.Stage {
     blacksmithTalk.gotoAndPlay(0);
     blacksmithTalk.animationSpeed = 0.05;
     this.addChild(blacksmithTalk);
-    blacksmithTalk.visible = false;
+    
 
     window.faceChange = setInterval(changeFace,3000)
 
@@ -206,7 +207,7 @@ export default class Intro extends PIXI.Stage {
     TweenMax.from(this.credits, 2.0, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut })
     TweenMax.from(blacksmithTalk, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
     TweenMax.from(blacksmithIdle, 0.5, { alpha:0, y: 350, delay:2.0, ease: Power1.easeOut })
-    TweenMax.to(welcome, 0.2, { alpha:1, delay:2.2, ease: Power1.easeOut })
+    TweenMax.to(welcome, 0.2, { alpha:1, delay:2.8, ease: Power1.easeOut })
     TweenMax.to(cloud1, 40.0, { x: -300, repeat: 10 })
     TweenMax.to(cloud2, 50.0, { x: -300, delay:3, repeat: 10 })
 
