@@ -219,8 +219,8 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
 
     console.log("New element: ", identifier, isBase);
 
-    this.setIdentifier(identifier);
     this.isBase = isBase;
+    this.setIdentifier(identifier);
     this.isDelivering = false;
     this.isDragging = false;
 
@@ -285,25 +285,24 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
         this.data = _default[identifier] || combinations[identifier];
         this.identifier = identifier;
 
-        if (performanceOnThisWave == "great") {
-          this.label = new PIXI.Text(this.data.label, {
-            font: DEFAULT_FONT,
-            fill: "#ffff00",
-            align: "center",
-            wordWrap: true,
-            wordWrapWidth: 200
-          });
-          this.addChild(this.label);
-        } else {
-          this.label = new PIXI.Text(this.data.label, {
-            font: DEFAULT_FONT,
-            fill: "#fff",
-            align: "center",
-            wordWrap: true,
-            wordWrapWidth: 200
-          });
-          this.addChild(this.label);
+        var labelOptions = {
+          font: DEFAULT_FONT,
+          fill: "#fff",
+          align: "center",
+          wordWrap: false
+        };
+
+        if (!this.isBase) {
+          labelOptions.wordWrap = true;
+          labelOptions.wordWrapWidth = 200;
         }
+
+        if (performanceOnThisWave == "great") {
+          labelOptions.fill = "#ffff00";
+        }
+
+        this.label = new PIXI.Text(this.data.label, labelOptions);
+        this.addChild(this.label);
 
         var frameId = "element-" + identifier + ".png";
         if (PIXI.TextureCache[frameId]) {
@@ -473,7 +472,7 @@ var Hud = (function (_PIXI$DisplayObjectContainer) {
       fill: "#fff",
       align: "center"
     });
-    this.timeLabel.x = 990;
+    this.timeLabel.x = 1020;
     this.timeLabel.anchor.x = 0.5;
     this.addChild(this.timeLabel);
 
@@ -485,11 +484,68 @@ var Hud = (function (_PIXI$DisplayObjectContainer) {
 
     this.progressCount = 0;
     this.progressPoints = 0;
+
+    // feedbacks
+    this.great = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameWarningPerfect.png"));
+    this.great.anchor.x = 0.5;
+    this.great.anchor.y = 0.5;
+    this.great.x = SCREEN_WIDTH / 2;
+    this.great.y = SCREEN_HEIGHT / 2 - 20;
+    this.great.alpha = 0;
+    this.addChild(this.great);
+
+    this.good = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameWarningGood.png"));
+    this.good.anchor.x = 0.5;
+    this.good.anchor.y = 0.5;
+    this.good.x = SCREEN_WIDTH / 2;
+    this.good.y = SCREEN_HEIGHT / 2 - 20;
+    this.good.alpha = 0;
+    this.addChild(this.good);
+
+    this.bad = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameWarningBad.png"));
+    this.bad.anchor.x = 0.5;
+    this.bad.anchor.y = 0.5;
+    this.bad.x = SCREEN_WIDTH / 2;
+    this.bad.y = SCREEN_HEIGHT / 2 - 20;
+    this.bad.alpha = 0;
+    this.addChild(this.bad);
+
+    this.timeup = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameWarningTime.png"));
+    this.timeup.anchor.x = 0.5;
+    this.timeup.anchor.y = 0.5;
+    this.timeup.x = SCREEN_WIDTH / 2;
+    this.timeup.y = SCREEN_HEIGHT / 2 - 20;
+    this.timeup.alpha = 0;
+    this.addChild(this.timeup);
+
+    events.on("delivered-performance", this.showPerformanceFeedback.bind(this));
   }
 
   _inherits(Hud, _PIXI$DisplayObjectContainer);
 
   _createClass(Hud, {
+    showPerformanceFeedback: {
+      value: function showPerformanceFeedback(performance) {
+
+        if (performance == "great") {
+          this.great.y = SCREEN_HEIGHT / 2 - 20;
+          TweenMax.to(this.great, 0.8, { y: SCREEN_HEIGHT / 2 - 70, alpha: 1 });
+          TweenMax.to(this.great, 1, { delay: 1.4, y: SCREEN_HEIGHT / 2 - 100, alpha: 0 });
+        } else if (performance == "good") {
+          this.good.y = SCREEN_HEIGHT / 2 - 20;
+          TweenMax.to(this.good, 0.8, { y: SCREEN_HEIGHT / 2 - 70, alpha: 1 });
+          TweenMax.to(this.good, 1, { delay: 1.4, y: SCREEN_HEIGHT / 2 - 100, alpha: 0 });
+        } else if (performance == "bad") {
+          this.bad.y = SCREEN_HEIGHT / 2 - 20;
+          TweenMax.to(this.bad, 0.8, { y: SCREEN_HEIGHT / 2 - 70, alpha: 1 });
+          TweenMax.to(this.bad, 1, { delay: 1.4, y: SCREEN_HEIGHT / 2 - 100, alpha: 0 });
+        } else if (performance == "time") {
+          this.timeup.y = SCREEN_HEIGHT / 2 - 20;
+          TweenMax.to(this.timeup, 0.8, { y: SCREEN_HEIGHT / 2 - 70, alpha: 1 });
+          TweenMax.to(this.timeup, 1, { delay: 1.4, y: SCREEN_HEIGHT / 2 - 100, alpha: 0 });
+        }
+      }
+    },
     addProgress: {
       value: function addProgress(kind) {
         var points = { bad: 0, good: 1, great: 2 };
@@ -830,6 +886,13 @@ var TalkBox = (function (_PIXI$DisplayObjectContainer) {
         this.text.setText(this.textToShow.substr(0, this.textAppendCount));
         this.textAppendCount++;
       }
+    },
+    dispose: {
+      value: function dispose() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
     }
   });
 
@@ -981,10 +1044,17 @@ var GameController = (function () {
     },
     setStage: {
       value: function setStage(stage) {
-        this.currentStage = stage;
+        var transition = arguments[1] === undefined ? null : arguments[1];
+
         if (this.stages.indexOf(stage) !== -1) {
           this.stages.push(this.currentStage);
         }
+
+        if (this.currentStage) {
+          this.currentStage.dispose();
+        }
+
+        this.currentStage = stage;
       }
     },
     loop: {
@@ -1020,6 +1090,10 @@ var WaveController = (function () {
   function WaveController(options) {
     _classCallCheck(this, WaveController);
 
+    waves.easy = shuffle(waves.easy);
+    waves.medium = shuffle(waves.medium);
+    waves.hard = shuffle(waves.hard);
+
     this.deliveryArea = options.deliveryArea;
     this.hud = options.hud;
     this.inventory = options.inventory;
@@ -1038,7 +1112,7 @@ var WaveController = (function () {
 
     this.timeInterval = null;
     this.currentTime = 10;
-    this.responses = { bad: 0, good: 0, great: 0 };
+    this.responses = [];
 
     events.on("element-drop", this.tryStartCountdown.bind(this));
   }
@@ -1145,7 +1219,9 @@ var WaveController = (function () {
     onDeliver: {
       value: function onDeliver(element) {
         var performance = this.getElementPerformance(element.identifier);
-        this.responses[performance]++;
+        this.responses.push(performance);
+
+        events.emit("delivered-performance", performance);
 
         if (performance == "bad") {
           sounds.play("game_wave_lose");
@@ -1156,7 +1232,6 @@ var WaveController = (function () {
         events.emit("talk", "customer", performance, this.waveData.feedbacks[performance]);
 
         this.hud.addProgress(performance);
-
         this.nextWave();
       }
     },
@@ -1170,11 +1245,20 @@ var WaveController = (function () {
         } else {
           var messages = ["We ran out of time! We lost this round!", "Are you nuts, smith? We can't fight empty handed! We lost that one!"];
           events.emit("talk", "customer", "bad", messages[Math.floor(Math.random() * messages.length)]);
+          events.emit("delivered-performance", "time");
 
           this.hud.addProgress("bad");
+          this.responses.push("bad");
           sounds.play("game_wave_lose");
 
           this.nextWave();
+        }
+      }
+    },
+    dispose: {
+      value: function dispose() {
+        if (this.timeInterval) {
+          clearTimeout(this.timeInterval);
         }
       }
     }
@@ -1499,7 +1583,7 @@ module.exports={
     ],
     "game_choose_item": [
       284000,
-      1068.117913832225
+      1481.6553287981833
     ],
     "game_clock_ending": [
       287000,
@@ -1593,7 +1677,7 @@ module.exports={
 
 module.exports = {
   intro: [{
-    text: "The enemies have arrived to our village! You need to help us crafting weapons before each day so we can survive!",
+    text: "The enemy approaches! We need weapons to fight before time runs out! Each day, 3 types of weapons are craftable with your materials. Make sure we win!",
     countdown: 20,
     inventory: ["steel", "silver", "cloth"],
     responses: {
@@ -1608,11 +1692,11 @@ module.exports = {
   }],
   easy: [{
     text: "More enemies have arrived, but all our steel is gone!",
-    countdown: 20,
+    countdown: 18,
     inventory: ["iron", "copper", "leather"],
     responses: {
       "kings-sword": "great",
-      "leathered-sword ": "good"
+      "leathered-sword": "good"
     },
     feedbacks: {
       great: "The king's sword! That was a legend to be told!",
@@ -1647,7 +1731,7 @@ module.exports = {
     }
   }, {
     text: "The village masons came to help!",
-    countdown: 15,
+    countdown: 14,
     inventory: ["wood", "stone", "sand"],
     responses: {
       "wood-spear": "great",
@@ -1678,7 +1762,7 @@ module.exports = {
     inventory: ["cat", "boots", "straw"],
     responses: {
       "battle-cat": "great",
-      "puss-in-boots ": "good"
+      "puss-in-boots": "good"
     },
     feedbacks: {
       great: "I hope you trained this cats for more cause the enemy couldn't take them!",
@@ -1700,7 +1784,7 @@ module.exports = {
     }
   }, {
     text: "The enemies have battle dogs! We are doomed!",
-    countdown: 15,
+    countdown: 14,
     inventory: ["ragdoll", "pepper", "lemon"],
     responses: {
       "super-hot-doll": "great",
@@ -1726,7 +1810,7 @@ module.exports = {
     }
   }, {
     text: "Damn, they have clerigs! The enemies are healing their wounded!",
-    countdown: 15,
+    countdown: 14,
     inventory: ["pillow", "beer-jug", "pumpkin"],
     responses: {
       "beer-hammer": "great",
@@ -1753,7 +1837,7 @@ module.exports = {
     }
   }, {
     text: "The enemies brought pretty witches to enchant our soldiers! We need to do something!",
-    countdown: 10,
+    countdown: 8,
     inventory: ["potion", "perfume", "cigarrete", "salt"],
     responses: {
       "ogre-potion": "great",
@@ -1836,6 +1920,11 @@ var GameController = _interopRequire(require("./controllers/GameController"));
 
 var Loader = _interopRequire(require("./screens/Loader"));
 
+var Intro = _interopRequire(require("./screens/Intro"));
+
+console.log("Main...");
+window.Intro = Intro;
+
 Math.clamp = function (num, min, max) {
   return num < min ? min : num > max ? max : num;
 };
@@ -1863,7 +1952,7 @@ window.controller = new GameController();
 controller.setStage(new Loader());
 controller.start();
 
-},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Loader":19,"./vendor/array.shuffle":20,"./vendor/generatorRuntime":21,"./vendor/pixi.draggable":22,"./vendor/pixi.particles":23,"gsap":24,"howler":25,"pixi.js":26,"wolfy87-eventemitter":27}],16:[function(require,module,exports){
+},{"./controllers/GameController":10,"./data/sound_effects.json":13,"./screens/Intro":18,"./screens/Loader":19,"./vendor/array.shuffle":20,"./vendor/generatorRuntime":21,"./vendor/pixi.draggable":22,"./vendor/pixi.particles":23,"gsap":24,"howler":25,"pixi.js":26,"wolfy87-eventemitter":27}],16:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1918,12 +2007,14 @@ var Craft = (function (_PIXI$Stage) {
     });
     window.waveController = this.waveController;
 
-    this.bg = new PIXI.TilingSprite(PIXI.Texture.fromFrame("inGameBG.png"), SCREEN_WIDTH, SCREEN_HEIGHT);
-    this.bg.y = this.hud.height;
+    this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("inGameBG.png"));
+
+    var hudHeight = 72;
+    this.bg.y = hudHeight;
     this.addChild(this.bg);
 
     this.inventory.x = 10;
-    this.inventory.y = this.hud.height + 4;
+    this.inventory.y = hudHeight + 4;
     this.addChild(this.inventory);
 
     this.workingArea.x = this.inventory.x + this.inventory.width + boxMargin;
@@ -1948,6 +2039,13 @@ var Craft = (function (_PIXI$Stage) {
   _createClass(Craft, {
     update: {
       value: function update() {}
+    },
+    dispose: {
+      value: function dispose() {
+        this.talkBox.dispose();
+        this.waveController.dispose();
+        this.removeChildren();
+      }
     }
   });
 
@@ -1959,6 +2057,8 @@ module.exports = Craft;
 },{"../components/DeliveryArea":2,"../components/Hud":4,"../components/Inventory":5,"../components/TalkBox":8,"../components/WorkingArea":9,"../controllers/WaveController":11}],17:[function(require,module,exports){
 "use strict";
 
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -1966,6 +2066,8 @@ var _get = function get(object, property, receiver) { var desc = Object.getOwnPr
 var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+var ParticleEmitter = _interopRequire(require("../components/ParticleEmitter"));
 
 var EndGame = (function (_PIXI$Stage) {
   function EndGame(responses) {
@@ -1976,14 +2078,122 @@ var EndGame = (function (_PIXI$Stage) {
     this.bg = new PIXI.Sprite(PIXI.Texture.fromFrame("endgame.png"));
     this.addChild(this.bg);
 
+    this.restartBtn = new PIXI.Sprite(PIXI.Texture.fromFrame("endgameBtn.png"));
+    this.restartBtn.x = SCREEN_WIDTH - this.restartBtn.width - 40;
+    this.restartBtn.y = SCREEN_HEIGHT - this.restartBtn.height - 40;
+    this.restartBtn.interactive = true;
+    this.restartBtn.buttonMode = true;
+    this.restartBtn.click = this.restartBtn.tap = this.restartGame.bind(this);
+    this.addChild(this.restartBtn);
+
+    TweenMax.from(this.restartBtn, 1, { alpha: 0, y: this.restartBtn.y + 10, ease: Power2.easeOut, delay: 1 });
+
+    // same from Hud.js
+    this.startProgressX = 342;
+    this.startProgressY = 282;
+    this.marginX = 48;
+
     this.responses = responses;
+    this.setupBullets();
+    this.setupScore();
   }
 
   _inherits(EndGame, _PIXI$Stage);
 
   _createClass(EndGame, {
+    restartGame: {
+      value: function restartGame() {
+        events.removeAllListeners();
+        controller.setStage(new Intro());
+      }
+    },
+    setupScore: {
+      value: function setupScore() {
+        var lostWaves = 0;
+        var wonWaves = 0;
+        var greatWaves = 0;
+
+        for (var i = 0; i < this.responses.length; i++) {
+          if (this.responses[i] !== "bad") {
+            wonWaves++;
+          } else {
+            lostWaves++;
+          }
+
+          if (this.responses[i] === "great") {
+            greatWaves++;
+          }
+        }
+
+        // play win / lose sound
+        var didWon = wonWaves >= 5;
+        sounds.stop();
+        soundsBackground.stop();
+        if (didWon) {
+          sounds.play("game_win");
+        } else {
+          sounds.play("game_lose");
+        }
+
+        var feebackText = didWon ? "You've won!" : "You've lost!";
+        this.feedbackLabel = new PIXI.Text(feebackText, {
+          font: DEFAULT_FONT,
+          fill: "#fff",
+          align: "center"
+        });
+        this.feedbackLabel.anchor.x = 0.5;
+        this.feedbackLabel.anchor.y = 0.5;
+        this.feedbackLabel.x = SCREEN_WIDTH / 2;
+        this.feedbackLabel.y = SCREEN_HEIGHT / 2 + 50;
+        this.addChild(this.feedbackLabel);
+
+        this.statusLabel = new PIXI.Text("You " + wonWaves + " x " + lostWaves + " Enemies", {
+          font: DEFAULT_FONT,
+          fill: "#fff",
+          align: "center"
+        });
+        this.statusLabel.anchor.x = 0.5;
+        this.statusLabel.anchor.y = 0.5;
+        this.statusLabel.x = SCREEN_WIDTH / 2;
+        this.statusLabel.y = this.feedbackLabel.y + 30;
+        this.addChild(this.statusLabel);
+
+        TweenMax.from(this.feedbackLabel, 1, { alpha: 0, y: this.statusLabel.y + 10, ease: Power2.easeOut });
+        TweenMax.from(this.statusLabel, 1, { alpha: 0, y: this.statusLabel.y + 10, ease: Power2.easeOut, delay: 0.5 });
+      }
+    },
+    setupBullets: {
+      value: function setupBullets() {
+        var colors = { bad: "#f10000", good: "#FFC600", great: "#15e730" };
+
+        for (var i = 0; i < this.responses.length; i++) {
+          var frameName = "progress-" + this.responses[i] + ".png";
+          var progressIcon = new PIXI.Sprite.fromFrame(frameName);
+
+          progressIcon.anchor.x = 0.5;
+          progressIcon.anchor.y = 0.5;
+          progressIcon.alpha = 0;
+          progressIcon.rotation = 0;
+          progressIcon.x = this.startProgressX + this.marginX * i;
+          progressIcon.y = this.startProgressY;
+          this.addChild(progressIcon);
+
+          progressIcon.scale.x = 10;
+          progressIcon.scale.y = 10;
+
+          TweenMax.to(progressIcon.scale, 0.5, { x: 1, y: 1, ease: Power2.easeOut, delay: i * 0.05 });
+          TweenMax.to(progressIcon, 0.5, { rotation: Math.PI * 45, ease: Power2.easeOut, alpha: 1, delay: i * 0.05 });
+        }
+      }
+    },
     update: {
       value: function update() {}
+    },
+    dispose: {
+      value: function dispose() {
+        this.restartBtn.click = this.restartBtn.tap = null;
+        this.removeChildren();
+      }
     }
   });
 
@@ -1992,7 +2202,7 @@ var EndGame = (function (_PIXI$Stage) {
 
 module.exports = EndGame;
 
-},{}],18:[function(require,module,exports){
+},{"../components/ParticleEmitter":6}],18:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -2087,29 +2297,143 @@ var Intro = (function (_PIXI$Stage) {
     function changeFace() {
       blacksmithTalk.visible = !blacksmithTalk.visible;
       blacksmithIdle.visible = !blacksmithIdle.visible;
+      welcome.visible = blacksmithIdle.visible;
     }
+
+    this.credits = new PIXI.Sprite(PIXI.Texture.fromFrame("homecredits.png"));
+    this.credits.anchor.x = 0.5;
+    this.credits.x = SCREEN_WIDTH / 2;
+    this.credits.y = SCREEN_HEIGHT - 60;
+    this.addChild(this.credits);
+
+    this.epa = new PIXI.Graphics();
+    this.epa.alpha = 0;
+    this.epa.beginFill(16776960);
+    this.epa.lineStyle(5, 16711680);
+    this.epa.drawRect(0, 0, 200, 50);
+    this.epa.x = 60;
+    this.epa.y = SCREEN_HEIGHT - 60;
+    this.epa.interactive = true;
+    this.epa.buttonMode = true;
+    this.epa.click = this.epa.tap = this.openPortfolio.bind("epa");
+    this.addChild(this.epa);
+
+    var epaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
+    epaabout.interactive = true;
+    epaabout.anchor.x = 0;
+    epaabout.anchor.y = 1;
+    epaabout.x = this.epa.x;
+    epaabout.y = SCREEN_HEIGHT - 70;
+    epaabout.alpha = 0;
+    this.addChild(epaabout);
+
+    this.epa.mouseover = this.showAbout.bind(epaabout);
+    this.epa.mouseout = this.hideAbout.bind(epaabout);
+
+    this.endel = new PIXI.Graphics();
+    this.endel.alpha = 0;
+    this.endel.beginFill(16776960);
+    this.endel.lineStyle(5, 16711680);
+    this.endel.drawRect(0, 0, 200, 50);
+    this.endel.x = 320;
+    this.endel.y = SCREEN_HEIGHT - 60;
+    this.endel.interactive = true;
+    this.endel.buttonMode = true;
+    this.endel.click = this.endel.tap = this.openPortfolio.bind("endel");
+    this.addChild(this.endel);
+
+    this.endelabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutProg.png"));
+    this.endelabout.interactive = true;
+    this.endelabout.anchor.x = 0;
+    this.endelabout.anchor.y = 1;
+    this.endelabout.x = this.endel.x;
+    this.endelabout.y = SCREEN_HEIGHT - 70;
+    this.endelabout.alpha = 0;
+    this.addChild(this.endelabout);
+
+    this.endel.mouseover = this.showAbout.bind(this.endelabout);
+    this.endel.mouseout = this.hideAbout.bind(this.endelabout);
+
+    this.testa = new PIXI.Graphics();
+    this.testa.alpha = 0;
+    this.testa.beginFill(16776960);
+    this.testa.lineStyle(5, 16711680);
+    this.testa.drawRect(0, 0, 250, 50);
+    this.testa.x = 550;
+    this.testa.y = SCREEN_HEIGHT - 60;
+    this.testa.interactive = true;
+    this.testa.buttonMode = true;
+    this.testa.click = this.testa.tap = this.openPortfolio.bind("testa");
+    this.addChild(this.testa);
+
+    this.testaabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutGD.png"));
+    this.testaabout.interactive = true;
+    this.testaabout.anchor.x = 0;
+    this.testaabout.anchor.y = 1;
+    this.testaabout.x = this.testa.x + 40;
+    this.testaabout.y = SCREEN_HEIGHT - 70;
+    this.testaabout.alpha = 0;
+    this.addChild(this.testaabout);
+
+    this.testa.mouseover = this.showAbout.bind(this.testaabout);
+    this.testa.mouseout = this.hideAbout.bind(this.testaabout);
+
+    this.tomo = new PIXI.Graphics();
+    this.tomo.alpha = 0;
+    this.tomo.beginFill(16776960);
+    this.tomo.lineStyle(5, 16711680);
+    this.tomo.drawRect(0, 0, 200, 50);
+    this.tomo.x = 860;
+    this.tomo.y = SCREEN_HEIGHT - 60;
+    this.tomo.interactive = true;
+    this.tomo.buttonMode = true;
+    this.tomo.click = this.tomo.tap = this.openPortfolio.bind("tomo");
+    this.addChild(this.tomo);
+
+    this.tomoabout = new PIXI.Sprite(PIXI.Texture.fromFrame("aboutArt.png"));
+    this.tomoabout.interactive = true;
+    this.tomoabout.anchor.x = 0;
+    this.tomoabout.anchor.y = 1;
+    this.tomoabout.x = this.tomo.x;
+    this.tomoabout.y = SCREEN_HEIGHT - 70;
+    this.tomoabout.alpha = 0;
+    this.addChild(this.tomoabout);
+
+    this.tomo.mouseover = this.showAbout.bind(this.tomoabout);
+    this.tomo.mouseout = this.hideAbout.bind(this.tomoabout);
+
+    var welcome = new PIXI.Sprite(PIXI.Texture.fromFrame("homeballon1.png"));
+    welcome.anchor.x = 0;
+    welcome.anchor.y = 0;
+    welcome.x = blacksmithTalk.x + 50;
+    welcome.y = blacksmithTalk.y - 75;
+    welcome.visible = true;
+    welcome.alpha = 0;
+    this.addChild(welcome);
 
     // move guys
     TweenMax.from(store, 2, { x: SCREEN_WIDTH + store.width, ease: Power1.easeOut });
     TweenMax.from(balcony, 2, { x: SCREEN_WIDTH + store.width / 2, ease: Power1.easeOut });
     TweenMax.to(ground1, 2, { x: -SCREEN_WIDTH, ease: Power1.easeOut });
     TweenMax.to(ground2, 2, { x: 0, ease: Power1.easeOut });
+    TweenMax.from(this.credits, 2, { x: SCREEN_WIDTH * 2, ease: Power1.easeOut });
     TweenMax.from(blacksmithTalk, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
     TweenMax.from(blacksmithIdle, 0.5, { alpha: 0, y: 350, delay: 2, ease: Power1.easeOut });
-
+    TweenMax.to(welcome, 0.2, { alpha: 1, delay: 2.2, ease: Power1.easeOut });
     TweenMax.to(cloud1, 40, { x: -300, repeat: 10 });
     TweenMax.to(cloud2, 50, { x: -300, delay: 3, repeat: 10 });
 
-    var startLabel = new PIXI.Graphics();
-    startLabel.alpha = 0;
-    startLabel.beginFill(16776960);
-    startLabel.lineStyle(5, 16711680);
-    startLabel.drawRect(0, 0, 300, 50);
-    startLabel.x = SCREEN_WIDTH / 2 - startLabel.width / 2;
-    startLabel.y = SCREEN_HEIGHT / 2 + 115;
-    startLabel.interactive = true;
-    startLabel.click = startLabel.tap = this.startGame.bind(this);
-    this.addChild(startLabel);
+    this.startLabel = new PIXI.Graphics();
+    this.startLabel.alpha = 0;
+    this.startLabel.beginFill(16776960);
+    this.startLabel.lineStyle(5, 16711680);
+    this.startLabel.drawRect(0, 0, 300, 50);
+    this.startLabel.x = SCREEN_WIDTH / 2 - this.startLabel.width / 2;
+    this.startLabel.y = SCREEN_HEIGHT / 2 + 115;
+    this.startLabel.interactive = true;
+    this.startLabel.click = this.startLabel.tap = this.startGame.bind(this);
+    this.startLabel.buttonMode = true;
+    this.addChild(this.startLabel);
   }
 
   _inherits(Intro, _PIXI$Stage);
@@ -2122,8 +2446,62 @@ var Intro = (function (_PIXI$Stage) {
         controller.setStage(new Craft());
       }
     },
+    showAbout: {
+      value: function showAbout() {
+        TweenMax.to(this, 0.2, { alpha: 1, ease: Power1.easeOut });
+      }
+    },
+    hideAbout: {
+      value: function hideAbout() {
+        TweenMax.to(this, 0.2, { alpha: 0, ease: Power1.easeOut });
+      }
+    },
+    openPortfolio: {
+      value: function openPortfolio() {
+        var id = this;
+        switch (id) {
+          case "epa":
+            window.open("http://epaneto.com", "_blank");
+            break;
+          case "endel":
+            window.open("http://github.com/endel", "_blank");
+            break;
+          case "testa":
+            window.open("http://mairatesta.me", "_blank");
+            break;
+          case "tomo":
+            window.open("http://sergiotomo.deviantart.com/", "_blank");
+            break;
+        }
+      }
+    },
     update: {
       value: function update() {}
+    },
+    dispose: {
+      value: function dispose() {
+        this.epa.click = this.epa.tap = null;
+        this.epa.mouseover = null;
+        this.epa.mouseout = null;
+
+        this.endel.click = this.endel.tap = null;
+        this.endel.mouseover = null;
+        this.endel.mouseout = null;
+
+        this.testa.click = this.testa.tap = null;
+        this.testa.mouseover = null;
+        this.testa.mouseout = null;
+
+        this.tomo.click = this.tomo.tap = null;
+        this.tomo.mouseover = null;
+        this.tomo.mouseout = null;
+
+        this.startLabel.click = this.startLabel.tap = null;
+        this.startLabel.mouseover = null;
+        this.startLabel.mouseout = null;
+
+        this.removeChildren();
+      }
     }
   });
 
@@ -2135,8 +2513,6 @@ module.exports = Intro;
 },{"./Craft":16}],19:[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-
 var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -2144,8 +2520,6 @@ var _get = function get(object, property, receiver) { var desc = Object.getOwnPr
 var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-var Intro = _interopRequire(require("./Intro"));
 
 var Loader = (function (_PIXI$Stage) {
   function Loader() {
@@ -2158,7 +2532,7 @@ var Loader = (function (_PIXI$Stage) {
 
     var that = this;
 
-    this.indicator = new PIXI.Sprite(PIXI.Texture.fromImage("images/pictureBlacksmith_0001.png"));
+    this.indicator = new PIXI.Sprite(PIXI.Texture.fromImage("images/loadingicon.png"));
     this.indicator.anchor.x = 0.5;
     this.indicator.anchor.y = 0.5;
     this.indicator.x = SCREEN_WIDTH / 2;
@@ -2191,6 +2565,11 @@ var Loader = (function (_PIXI$Stage) {
           controller.setStage(new Intro());
         }
       }
+    },
+    dispose: {
+      value: function dispose() {
+        this.removeChildren();
+      }
     }
   });
 
@@ -2199,7 +2578,7 @@ var Loader = (function (_PIXI$Stage) {
 
 module.exports = Loader;
 
-},{"./Intro":18}],20:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 window.shuffle = function (array) {
