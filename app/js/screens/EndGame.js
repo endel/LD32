@@ -30,6 +30,8 @@ export default class EndGame extends PIXI.Stage {
   }
 
   restartGame() {
+    var feebackText = (this.didWon) ? "You've won!" : "You've lost!";
+    _trackEvent("Restarted", feebackText);
     events.removeAllListeners();
     controller.setStage(new Intro);
   }
@@ -51,16 +53,18 @@ export default class EndGame extends PIXI.Stage {
     }
 
     // play win / lose sound
-    var didWon = (wonWaves >= 5);
+    this.didWon = (wonWaves >= 5);
     sounds.stop();
     soundsBackground.stop();
-    if (didWon) {
+    if (this.didWon) {
       sounds.play('game_win');
+      _trackEvent("Endgame", "Win")
     } else {
       sounds.play('game_lose');
+      _trackEvent("Endgame", "Lose")
     }
 
-    var feebackText = (didWon) ? "You've won!" : "You've lost!";
+    var feebackText = (this.didWon) ? "You've won!" : "You've lost!";
     this.feedbackLabel = new PIXI.Text(feebackText, {
       font: DEFAULT_FONT,
       fill: "#fff",

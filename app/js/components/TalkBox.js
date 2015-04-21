@@ -86,7 +86,17 @@ export default class TalkBox extends PIXI.DisplayObjectContainer {
 
     this.textToShow = text
     this.textAppendCount = 0;
-    this.interval = setInterval(this.appendText.bind(this), 40);
+
+    var time = 40
+    if(text.length > 60)
+    {
+      time = 20
+    }else if(text.length > 100)
+    {
+      time = 10
+    }
+
+    this.interval = setInterval(this.appendText.bind(this), time);
   }
 
   appendText() {

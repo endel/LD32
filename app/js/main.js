@@ -47,3 +47,7 @@ document.body.appendChild(renderer.view);
 window.controller = new GameController();
 controller.setStage(new Loader)
 controller.start();
+
+window._trackEvent = function(a,b,c) {
+	ga('send', 'event', a, b, c);
+};
