@@ -1,7 +1,7 @@
 export default {
   "intro": [
   {
-    "text": "The enemies approaches! We need weapons to fight before time runs out! Each day, 3 types of weapons are craftable with your materials. Make sure we win!",
+    "text": "The enemy approaches! We need weapons to fight before time runs out! Each day, 3 types of weapons are craftable with your materials. Make sure we win!",
     "countdown": 20,
     "inventory": ["steel", "silver", "cloth"],
     "responses": {
