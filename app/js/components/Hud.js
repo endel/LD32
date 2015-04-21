@@ -22,7 +22,7 @@ export default class Hud extends PIXI.DisplayObjectContainer {
       fill: "#fff",
       align: "center"
     })
-    this.timeLabel.x = 990
+    this.timeLabel.x = 1020
     this.timeLabel.anchor.x = 0.5
     this.addChild(this.timeLabel);
 
