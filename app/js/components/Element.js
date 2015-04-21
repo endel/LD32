@@ -12,8 +12,8 @@ export default class Element extends PIXI.DisplayObjectContainer {
 
     console.log("New element: ", identifier, isBase)
 
-    this.setIdentifier(identifier);
     this.isBase = isBase
+    this.setIdentifier(identifier);
     this.isDelivering = false;
     this.isDragging = false;
 
@@ -73,25 +73,24 @@ export default class Element extends PIXI.DisplayObjectContainer {
     this.data = _default[ identifier ] || combinations[ identifier ];
     this.identifier = identifier;
 
-    if(performanceOnThisWave == "great"){
-      this.label = new PIXI.Text(this.data.label, {
-        font: DEFAULT_FONT,
-        fill: "#ffff00",
-        align: "center",
-        wordWrap: true,
-        wordWrapWidth: 200
-      });
-      this.addChild(this.label);
-    }else{
-      this.label = new PIXI.Text(this.data.label, {
-        font: DEFAULT_FONT,
-        fill: "#fff",
-        align: "center",
-        wordWrap: true,
-        wordWrapWidth: 200
-      });
-      this.addChild(this.label);
+    var labelOptions = {
+      font: DEFAULT_FONT,
+      fill: "#fff",
+      align: "center",
+      wordWrap: false
+    };
+
+    if (!this.isBase) {
+      labelOptions.wordWrap = true;
+      labelOptions.wordWrapWidth = 200;
     }
+
+    if(performanceOnThisWave == "great"){
+      labelOptions.fill = "#ffff00";
+    }
+
+    this.label = new PIXI.Text(this.data.label, labelOptions);
+    this.addChild(this.label);
 
     var frameId = "element-" + identifier + ".png";
     if (PIXI.TextureCache[ frameId ]) {
