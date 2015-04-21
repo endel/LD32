@@ -1,4 +1,3 @@
-import Intro from './Intro'
 
 export default class Loader extends PIXI.Stage {
 

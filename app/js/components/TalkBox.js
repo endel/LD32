@@ -99,5 +99,11 @@ export default class TalkBox extends PIXI.DisplayObjectContainer {
     this.textAppendCount++;
   }
 
+  dispose() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  }
+
 }
 

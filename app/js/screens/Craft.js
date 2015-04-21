@@ -66,6 +66,8 @@ export default class Craft extends PIXI.Stage {
   }
 
   dispose() {
+    this.talkBox.dispose();
+    this.waveController.dispose();
     this.removeChildren();
   }
 

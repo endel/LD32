@@ -1,5 +1,4 @@
 import ParticleEmitter from '../components/ParticleEmitter';
-import Intro from './Intro';
 
 export default class EndGame extends PIXI.Stage {
 
@@ -31,6 +30,7 @@ export default class EndGame extends PIXI.Stage {
   }
 
   restartGame() {
+    events.removeAllListeners();
     controller.setStage(new Intro);
   }
 

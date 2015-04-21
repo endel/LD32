@@ -35,9 +35,9 @@ export default class WaveController {
 
   *sectionList() {
     yield "intro";
-    // yield "easy";
-    // yield "medium";
-    // yield "hard";
+    yield "easy";
+    yield "medium";
+    yield "hard";
   }
 
   start() {
@@ -144,6 +144,12 @@ export default class WaveController {
       sounds.play('game_wave_lose');
 
       this.nextWave()
+    }
+  }
+
+  dispose() {
+    if (this.timeInterval) {
+      clearTimeout(this.timeInterval)
     }
   }
 

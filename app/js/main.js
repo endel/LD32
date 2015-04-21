@@ -16,6 +16,10 @@ import {Howl, Howler} from 'howler';
 
 import GameController from './controllers/GameController'
 import Loader from './screens/Loader'
+import Intro from './screens/Intro';
+
+console.log("Main...")
+window.Intro = Intro;
 
 Math.clamp = function(num, min, max) {
   return num < min ? min : (num > max ? max : num);
