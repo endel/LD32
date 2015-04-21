@@ -152,7 +152,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
     }
 
     if (result) {
-      var messages = ["Yey.", "It worked.", "Sounds good."]
+      var messages = ["Yey.", "It worked.", "Sounds good.", "That's it, I'm out.", "I like that."]
       events.emit('talk', 'blacksmith', 'happy', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_success')
@@ -162,7 +162,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
       this.setIdentifier(result);
     } else {
 
-      var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooo."]
+      var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."]
       events.emit('talk', 'blacksmith', 'sad', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_fail')

@@ -1,3 +1,4 @@
+import TransitionScreen from './TransitionScreen';
 import Craft from './Craft'
 
 export default class Intro extends PIXI.Stage {
@@ -221,12 +222,17 @@ export default class Intro extends PIXI.Stage {
     this.startLabel.click = this.startLabel.tap = this.startGame.bind(this);
     this.startLabel.buttonMode = true;
     this.addChild(this.startLabel);
+
+    this.transitionScreen = new TransitionScreen()
+    this.addChild(this.transitionScreen);
+
   }
 
   startGame() {
     clearInterval(window.faceChange)
     sounds.play('intro_play')
-    controller.setStage(new Craft);
+
+    controller.setStage(new Craft, true);
   }
 
   showAbout()

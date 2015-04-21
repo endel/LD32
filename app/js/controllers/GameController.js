@@ -31,6 +31,14 @@ export default class GameController {
       this.stages.push(this.currentStage);
     }
 
+    if (transition && this.currentStage && this.currentStage.transitionScreen) {
+      this.currentStage.transitionScreen.open(stage) ;
+    } else {
+      this.setCurrentStage(stage)
+    }
+  }
+
+  setCurrentStage(stage) {
     if (this.currentStage) {
       this.currentStage.dispose();
     }
@@ -40,9 +48,6 @@ export default class GameController {
 
   loop() {
     renderer.render(this.currentStage);
-    // for(var i=0,l=this.stages.length;i<l;i++) {
-    //   renderer.render(this.stages[i]);
-    // }
     window.requestAnimationFrame(this.loop.bind(this));
   }
 
