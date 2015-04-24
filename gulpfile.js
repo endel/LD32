@@ -137,7 +137,8 @@ gulp.task('audio', function () {
 gulp.task('images', function () {
   spritesheet('app/images/*.png', {
     format: 'pixi.js',
-    path: 'dist'
+    path: 'dist',
+    padding: 1
   }, function (err) {
     if (err) throw err;
     console.log('spritesheet successfully generated');
@@ -145,7 +146,8 @@ gulp.task('images', function () {
 
   spritesheet('app/images/*.png', {
     format: 'pixi.js',
-    path: '.tmp'
+    path: '.tmp',
+    padding: 1
   }, function (err) {
     if (err) throw err;
     console.log('spritesheet successfully generated');
