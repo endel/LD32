@@ -162,7 +162,7 @@ export default class Element extends PIXI.DisplayObjectContainer {
       this.setIdentifier(result);
     } else {
 
-      var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."]
+      var messages = ["Argh, shoot.", "What the hey.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."]
       events.emit('talk', 'blacksmith', 'sad', messages[ Math.floor((Math.random() * messages.length)) ]);
 
       sounds.play('game_craft_fail')
