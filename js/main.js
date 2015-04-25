@@ -376,7 +376,7 @@ var Element = (function (_PIXI$DisplayObjectContainer) {
           this.setIdentifier(result);
         } else {
 
-          var messages = ["Argh, dammit.", "Fuck that shit.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."];
+          var messages = ["Argh, shoot.", "What the hey.", "Nooooooooooooooooo.", "It's not working!", "Oh noes."];
           events.emit("talk", "blacksmith", "sad", messages[Math.floor(Math.random() * messages.length)]);
 
           sounds.play("game_craft_fail");
@@ -1623,7 +1623,7 @@ module.exports={
     ],
     "game_craft_perfect": [
       300000,
-      1683.9229024943165
+      1509.2970521541815
     ],
     "game_craft_success": [
       303000,
